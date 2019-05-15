@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Main extends Application {
-    static Connection conn;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -25,22 +25,8 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
-        DatabaseConnect databaseConnect = new DatabaseConnect();
-        try
-        {
-            conn = databaseConnect.GetConn();
-            Statement state = conn.createStatement();
-            ResultSet rs = state.executeQuery("SELECT * FROM PRACOWNICY");
-
-            while(rs.next())
-            {
-                System.out.println(rs.getObject(2));
-            }
-        }
-        catch (SQLException ex)
-        {
-
-        }
+        Controller controller = new Controller();
+        controller.Initialize();
 
     }
 }

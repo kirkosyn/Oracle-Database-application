@@ -6,13 +6,21 @@ public class Klient {
     private int id_klienta;
     private String imie;
     private String nazwisko;
-    private Date data_rejestracji;
-    private char czy_zarejestrowany;
-    private String email;
     private String nr_telefonu;
+    private String email;
+    private char czy_zarejestrowany;
+    private Date data_rejestracji;
     private int id_adresu;
 
-    public Klient() {
+    public Klient(int id_klienta, String imie, String nazwisko, String nr_telefonu, String email, char czy_zarejestrowany, Date data_rejestracji, int id_adresu) {
+        this.id_klienta = id_klienta;
+        this.imie = imie;
+        this.nazwisko = nazwisko;
+        this.nr_telefonu = nr_telefonu;
+        this.email = email;
+        this.czy_zarejestrowany = czy_zarejestrowany;
+        this.data_rejestracji = data_rejestracji;
+        this.id_adresu = id_adresu;
     }
 
     public void setId_klienta(int id_klienta) {

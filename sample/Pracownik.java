@@ -12,8 +12,20 @@ public class Pracownik {
     private String nr_konta_bankowego;
     private String nr_telefonu;
     private int id_antykwariatu;
+    private int id_adresu;
 
-    public Pracownik() {
+    public Pracownik(int id_pracownika, String imie, String nazwisko, Date data_urodzenia, String pesel,
+                     String umowa, String nr_konta_bankowego, String nr_telefonu, int id_antykwariatu, int id_adresu) {
+        this.id_pracownika = id_pracownika;
+        this.imie = imie;
+        this.nazwisko = nazwisko;
+        this.data_urodzenia = data_urodzenia;
+        this.pesel = pesel;
+        this.umowa = umowa;
+        this.nr_konta_bankowego = nr_konta_bankowego;
+        this.nr_telefonu = nr_telefonu;
+        this.id_antykwariatu = id_antykwariatu;
+        this.id_adresu = id_adresu;
     }
 
     public void setId_pracownika(int id_pracownika) {
@@ -55,8 +67,6 @@ public class Pracownik {
     public void setId_adresu(int id_adresu) {
         this.id_adresu = id_adresu;
     }
-
-    private int id_adresu;
 
     public int getId_pracownika() {
         return id_pracownika;
