@@ -1,5 +1,12 @@
 package sample;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 
 public class Pracownik {
@@ -27,6 +34,8 @@ public class Pracownik {
         this.id_antykwariatu = id_antykwariatu;
         this.id_adresu = id_adresu;
     }
+
+    public Pracownik(){}
 
     public void setId_pracownika(int id_pracownika) {
         this.id_pracownika = id_pracownika;
@@ -106,5 +115,34 @@ public class Pracownik {
 
     public int getId_adresu() {
         return id_adresu;
+    }
+
+    public ObservableList<Pracownik> GetAllPracownicy(Connection conn) {
+        ObservableList<Pracownik> pracownicy = FXCollections.observableArrayList();
+        Pracownik pracownik = new Pracownik();
+        try
+        {
+            Statement state = conn.createStatement();
+            ResultSet rs = state.executeQuery("SELECT * FROM PRACOWNICY");
+            while(rs.next())
+            {
+                pracownik.setId_pracownika(rs.getInt("Id_Pracownika"));
+                pracownik.setImie(rs.getString("Imie"));
+                pracownik.setNazwisko(rs.getString("Nazwisko"));
+                pracownik.setData_urodzenia(rs.getDate("Data_Urodzenia"));
+                pracownik.setPesel(rs.getString("Pesel"));
+                pracownik.setUmowa(rs.getString("Umowa"));
+                pracownik.setNr_konta_bankowego(rs.getString("Nr_Konta_Bankowego"));
+                pracownik.setNr_telefonu(rs.getString("Nr_Telefonu"));
+                pracownik.setId_antykwariatu(rs.getInt("Id_Antykwariatu"));
+                pracownik.setId_adresu(rs.getInt("Id_Adresu"));
+
+                pracownicy.add(pracownik);
+            }
+        }
+        catch (SQLException ex) {
+        }
+
+        return pracownicy;
     }
 }
