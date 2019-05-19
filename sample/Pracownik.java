@@ -15,20 +15,19 @@ public class Pracownik {
     private String nazwisko;
     private Date data_urodzenia;
     private String pesel;
-    private String umowa;
     private String nr_konta_bankowego;
     private String nr_telefonu;
     private int id_antykwariatu;
     private int id_adresu;
+    ObservableList<Pracownik> pracownicy;
 
     public Pracownik(int id_pracownika, String imie, String nazwisko, Date data_urodzenia, String pesel,
-                     String umowa, String nr_konta_bankowego, String nr_telefonu, int id_antykwariatu, int id_adresu) {
+                     String nr_konta_bankowego, String nr_telefonu, int id_antykwariatu, int id_adresu) {
         this.id_pracownika = id_pracownika;
         this.imie = imie;
         this.nazwisko = nazwisko;
         this.data_urodzenia = data_urodzenia;
         this.pesel = pesel;
-        this.umowa = umowa;
         this.nr_konta_bankowego = nr_konta_bankowego;
         this.nr_telefonu = nr_telefonu;
         this.id_antykwariatu = id_antykwariatu;
@@ -55,10 +54,6 @@ public class Pracownik {
 
     public void setPesel(String pesel) {
         this.pesel = pesel;
-    }
-
-    public void setUmowa(String umowa) {
-        this.umowa = umowa;
     }
 
     public void setNr_konta_bankowego(String nr_konta_bankowego) {
@@ -97,10 +92,6 @@ public class Pracownik {
         return pesel;
     }
 
-    public String getUmowa() {
-        return umowa;
-    }
-
     public String getNr_konta_bankowego() {
         return nr_konta_bankowego;
     }
@@ -117,28 +108,58 @@ public class Pracownik {
         return id_adresu;
     }
 
+    public void showParameters(Pracownik pracownik)
+    {
+        System.out.println(String.valueOf(pracownik.getId_pracownika() + " " + pracownik.getImie() + " " +
+                pracownik.getNazwisko() + " " + String.valueOf(pracownik.getData_urodzenia()) + " " +
+                pracownik.getPesel() + " " + pracownik.getNr_konta_bankowego() + " " +
+                pracownik.getNr_telefonu() + " " + String.valueOf(pracownik.getId_antykwariatu()) + " " +
+                String.valueOf(pracownik.getId_adresu())));
+    }
+
     public ObservableList<Pracownik> GetAllPracownicy(Connection conn) {
-        ObservableList<Pracownik> pracownicy = FXCollections.observableArrayList();
-        Pracownik pracownik = new Pracownik();
+        pracownicy = FXCollections.observableArrayList();
+        Pracownik pracownik;
         try
         {
             Statement state = conn.createStatement();
             ResultSet rs = state.executeQuery("SELECT * FROM PRACOWNICY");
             while(rs.next())
             {
+                pracownik = new Pracownik();
+                //System.out.println(rs.getInt(1));
+                /*pracownicy.add(new Pracownik(rs.getInt("Id_Pracownika"), rs.getString("Imie"),
+                        rs.getString("Nazwisko"), rs.getDate("Data_Urodzenia"), rs.getString("Pesel"),
+                        rs.getString("Umowa"),rs.getString("Nr_Konta_Bankowego"), rs.getString("Nr_Telefonu"),
+                        rs.getInt("Id_Antykwariatu"), rs.getInt("Id_Adresu")));*/
+
                 pracownik.setId_pracownika(rs.getInt("Id_Pracownika"));
                 pracownik.setImie(rs.getString("Imie"));
                 pracownik.setNazwisko(rs.getString("Nazwisko"));
                 pracownik.setData_urodzenia(rs.getDate("Data_Urodzenia"));
                 pracownik.setPesel(rs.getString("Pesel"));
-                pracownik.setUmowa(rs.getString("Umowa"));
                 pracownik.setNr_konta_bankowego(rs.getString("Nr_Konta_Bankowego"));
                 pracownik.setNr_telefonu(rs.getString("Nr_Telefonu"));
                 pracownik.setId_antykwariatu(rs.getInt("Id_Antykwariatu"));
                 pracownik.setId_adresu(rs.getInt("Id_Adresu"));
 
+                /*pracownik.setId_pracownika(rs.getInt(1));
+                pracownik.setImie(rs.getString(2));
+                pracownik.setNazwisko(rs.getString(3));
+                pracownik.setData_urodzenia(rs.getDate(4));
+                pracownik.setPesel(rs.getString(5));
+                pracownik.setNr_konta_bankowego(rs.getString(6));
+                pracownik.setNr_telefonu(rs.getString(7));
+                pracownik.setId_antykwariatu(rs.getInt(8));
+                pracownik.setId_adresu(rs.getInt(9));*/
+
+                showParameters(pracownik);
+
                 pracownicy.add(pracownik);
             }
+
+            rs.close();
+            state.close();
         }
         catch (SQLException ex) {
         }
