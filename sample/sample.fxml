@@ -6,33 +6,77 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500" minWidth="1000" prefHeight="500.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500" minWidth="1000" prefHeight="500.0"
+            prefWidth="1000.0"
+            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
     <children>
-        <TableView layoutX="83.0" layoutY="37.0" prefHeight="232.0" prefWidth="537.0" style="-fx-font-size: 8px">
+        <TableView fx:id="tablePracownicy" layoutX="16.0" layoutY="37.0" prefHeight="232.0" prefWidth="604.0"
+                   style="-fx-font-size: 8px">
 
             <columns>
-                <TableColumn id="id" maxWidth="100" minWidth="50" prefWidth="50" text="Id_Pracownika" />
-                <TableColumn id="imie" maxWidth="100" minWidth="50" prefWidth="50" text="Imie" />
-                <TableColumn maxWidth="100" minWidth="50" prefWidth="50" text="Nazwisko" />
-                <TableColumn maxWidth="100" minWidth="50" prefWidth="50" text="Data_Urodzenia" />
-                <TableColumn maxWidth="100" minWidth="50" prefWidth="50" text="Pesel" />
-                <TableColumn maxWidth="100" minWidth="50" prefWidth="50" text="Adres" />
-                <TableColumn maxWidth="100" minWidth="50" prefWidth="50" text="Umowa" />
-                <TableColumn maxWidth="100" minWidth="50" prefWidth="50" text="Nr_Konta_Bankowego" />
-                <TableColumn maxWidth="100" minWidth="50" prefWidth="50" text="Telefon" />
+                <TableColumn fx:id="columnIdPracownika" maxWidth="100" minWidth="50" prefWidth="50"
+                             text="Id_Pracownika">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="id_pracownika"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="columnImiePracownika" maxWidth="100" minWidth="50" prefWidth="50" text="Imie">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="imie"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="columnNazwiskoPracownika" maxWidth="100" minWidth="50" prefWidth="50"
+                             text="Nazwisko">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="nazwisko"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="columnDataUrPracownika" maxWidth="100" minWidth="50" prefWidth="50"
+                             text="Data_Urodzenia">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="data_urodzenia"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="columnPeselPracownika" maxWidth="100" minWidth="50" prefWidth="50" text="Pesel">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="pesel"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="columnNrKontaPracownika" maxWidth="100" minWidth="50" prefWidth="50"
+                             text="Nr_Konta_Bankowego">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="nr_konta_bankowego"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="columnNrTelPracownika" maxWidth="100" minWidth="50" prefWidth="50"
+                             text="Nr_telefonu">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="nr_telefonu"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="columnIdAntykwariatu" prefWidth="75.0" text="Id_Antykwariatu">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="id_antykwariatu"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="columnIdAdresu" prefWidth="75.0" text="Id_Adresu">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="id_adresu"/>
+                    </cellValueFactory>
+                </TableColumn>
             </columns>
         </TableView>
-        <Button layoutX="200.0" layoutY="288.0" mnemonicParsing="false" text="Dodaj" />
-        <Button layoutX="272.0" layoutY="288.0" mnemonicParsing="false" text="Usun" />
-        <Button layoutX="337.0" layoutY="288.0" mnemonicParsing="false" text="Szukaj" />
-        <Button layoutX="412.0" layoutY="288.0" mnemonicParsing="false" text="Cofnij" />
-        <TextField layoutX="659.0" layoutY="20.0" prefHeight="27.0" prefWidth="224.0" promptText="Imie" />
-        <TextField layoutX="659.0" layoutY="68.0" prefHeight="27.0" prefWidth="224.0" promptText="Nazwisko" />
-        <TextField layoutX="659.0" layoutY="117.0" prefHeight="27.0" prefWidth="224.0" promptText="Data urodzenia" />
-        <TextField layoutX="659.0" layoutY="168.0" prefHeight="27.0" prefWidth="224.0" promptText="Pesel" />
-        <TextField layoutX="659.0" layoutY="220.0" prefHeight="27.0" prefWidth="224.0" promptText="Adres" />
-        <TextField layoutX="659.0" layoutY="269.0" prefHeight="27.0" prefWidth="224.0" promptText="Umowa" />
-        <TextField layoutX="659.0" layoutY="317.0" prefHeight="27.0" prefWidth="224.0" promptText="Nr konta bankowego" />
-        <TextField layoutX="659.0" layoutY="368.0" prefHeight="27.0" prefWidth="224.0" promptText="Telefon" />
+        <Button layoutX="200.0" layoutY="288.0" mnemonicParsing="false" text="Dodaj"/>
+        <Button layoutX="272.0" layoutY="288.0" mnemonicParsing="false" text="Usun"/>
+        <Button layoutX="337.0" layoutY="288.0" mnemonicParsing="false" text="Szukaj"/>
+        <Button layoutX="412.0" layoutY="288.0" mnemonicParsing="false" text="Cofnij"/>
+        <TextField layoutX="659.0" layoutY="20.0" prefHeight="27.0" prefWidth="224.0" promptText="Imie"/>
+        <TextField layoutX="659.0" layoutY="68.0" prefHeight="27.0" prefWidth="224.0" promptText="Nazwisko"/>
+        <TextField layoutX="659.0" layoutY="117.0" prefHeight="27.0" prefWidth="224.0" promptText="Data urodzenia"/>
+        <TextField layoutX="659.0" layoutY="168.0" prefHeight="27.0" prefWidth="224.0" promptText="Pesel"/>
+        <TextField layoutX="659.0" layoutY="220.0" prefHeight="27.0" prefWidth="224.0" promptText="Adres"/>
+        <TextField layoutX="659.0" layoutY="317.0" prefHeight="27.0" prefWidth="224.0" promptText="Nr konta bankowego"/>
+        <TextField layoutX="659.0" layoutY="368.0" prefHeight="27.0" prefWidth="224.0" promptText="Telefon"/>
     </children>
 </AnchorPane>
