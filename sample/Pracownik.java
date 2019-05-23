@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -7,105 +9,104 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 
 public class Pracownik {
-    private int id_pracownika;
+    private Integer id_pracownika;
     private String imie;
     private String nazwisko;
-    private Date data_urodzenia;
+    private String data_urodzenia;
     private String pesel;
     private String nr_konta_bankowego;
     private String nr_telefonu;
-    private int id_antykwariatu;
-    private int id_adresu;
-    ObservableList<Pracownik> pracownicy;
+    private Integer id_antykwariatu;
+    private Integer id_adresu;
+    private ObservableList<Pracownik> pracownicy;
 
-    public Pracownik(int id_pracownika, String imie, String nazwisko, Date data_urodzenia, String pesel,
-                     String nr_konta_bankowego, String nr_telefonu, int id_antykwariatu, int id_adresu) {
-        this.id_pracownika = id_pracownika;
-        this.imie = imie;
-        this.nazwisko = nazwisko;
-        this.data_urodzenia = data_urodzenia;
-        this.pesel = pesel;
-        this.nr_konta_bankowego = nr_konta_bankowego;
-        this.nr_telefonu = nr_telefonu;
-        this.id_antykwariatu = id_antykwariatu;
-        this.id_adresu = id_adresu;
+    public Pracownik(Integer id_pracownika, String imie, String nazwisko, String data_urodzenia, String pesel,
+                     String nr_konta_bankowego, String nr_telefonu, Integer id_antykwariatu, Integer id_adresu) {
+        this.id_pracownika = id_pracownika; //.setValue(id_pracownika);
+        this.imie = imie; //.setValue(imie);
+        this.nazwisko = nazwisko; //.setValue(nazwisko);
+        this.data_urodzenia = data_urodzenia; //.setValue(data_urodzenia);
+        this.pesel = pesel; //.setValue(pesel);
+        this.nr_konta_bankowego = nr_konta_bankowego; //.setValue(nr_konta_bankowego);
+        this.nr_telefonu = nr_telefonu; //.setValue(nr_telefonu);
+        this.id_antykwariatu = id_antykwariatu; //.setValue(id_antykwariatu);
+        this.id_adresu = id_adresu; //.setValue(id_adresu);
     }
 
     public Pracownik(){}
 
-    public void setId_pracownika(int id_pracownika) {
-        this.id_pracownika = id_pracownika;
+    public void setId_pracownika(Integer id_pracownika) {
+        this.id_pracownika = id_pracownika; //setValue(id_pracownika);
     }
 
     public void setImie(String imie) {
-        this.imie = imie;
+        this.imie = imie; //.setValue(imie);
     }
 
     public void setNazwisko(String nazwisko) {
-        this.nazwisko = nazwisko;
+        this.nazwisko = nazwisko; //.setValue(nazwisko);
     }
 
-    public void setData_urodzenia(Date data_urodzenia) {
-        this.data_urodzenia = data_urodzenia;
+    public void setData_urodzenia(String data_urodzenia) {
+        this.data_urodzenia = data_urodzenia; //.setValue(data_urodzenia);
     }
 
     public void setPesel(String pesel) {
-        this.pesel = pesel;
+        this.pesel = pesel; //.setValue(pesel);
     }
 
     public void setNr_konta_bankowego(String nr_konta_bankowego) {
-        this.nr_konta_bankowego = nr_konta_bankowego;
+        this.nr_konta_bankowego = nr_konta_bankowego; //.setValue(nr_konta_bankowego);
     }
 
     public void setNr_telefonu(String nr_telefonu) {
-        this.nr_telefonu = nr_telefonu;
+        this.nr_telefonu = nr_telefonu; //.setValue(nr_telefonu);
     }
 
-    public void setId_antykwariatu(int id_antykwariatu) {
-        this.id_antykwariatu = id_antykwariatu;
+    public void setId_antykwariatu(Integer id_antykwariatu) {
+        this.id_antykwariatu = id_antykwariatu; //.setValue(id_antykwariatu);
     }
 
-    public void setId_adresu(int id_adresu) {
-        this.id_adresu = id_adresu;
+    public void setId_adresu(Integer id_adresu) {
+        this.id_adresu = id_adresu; //.setValue(id_adresu);
     }
 
-    public int getId_pracownika() {
-        return id_pracownika;
+    public Integer getId_pracownika() {
+        return id_pracownika;//.get();
     }
 
     public String getImie() {
-        return imie;
+        return imie;//.get();
     }
 
     public String getNazwisko() {
-        return nazwisko;
+        return nazwisko;//.get();
     }
 
-    public Date getData_urodzenia() {
-        return data_urodzenia;
+    public String getData_urodzenia() {
+        return data_urodzenia;//.get();
     }
 
     public String getPesel() {
-        return pesel;
+        return pesel;//.get();
     }
 
     public String getNr_konta_bankowego() {
-        return nr_konta_bankowego;
+        return nr_konta_bankowego;//.get();
     }
 
     public String getNr_telefonu() {
-        return nr_telefonu;
+        return nr_telefonu;//.get();
     }
 
-    public int getId_antykwariatu() {
-        return id_antykwariatu;
+    public Integer getId_antykwariatu() {
+        return id_antykwariatu;//.get();
     }
 
-    public int getId_adresu() {
-        return id_adresu;
+    public Integer getId_adresu() {
+        return id_adresu;//.get();
     }
 
     public void showParameters(Pracownik pracownik)
@@ -127,33 +128,18 @@ public class Pracownik {
             while(rs.next())
             {
                 pracownik = new Pracownik();
-                //System.out.println(rs.getInt(1));
-                /*pracownicy.add(new Pracownik(rs.getInt("Id_Pracownika"), rs.getString("Imie"),
-                        rs.getString("Nazwisko"), rs.getDate("Data_Urodzenia"), rs.getString("Pesel"),
-                        rs.getString("Umowa"),rs.getString("Nr_Konta_Bankowego"), rs.getString("Nr_Telefonu"),
-                        rs.getInt("Id_Antykwariatu"), rs.getInt("Id_Adresu")));*/
 
-                pracownik.setId_pracownika(rs.getInt("Id_Pracownika"));
-                pracownik.setImie(rs.getString("Imie"));
-                pracownik.setNazwisko(rs.getString("Nazwisko"));
-                pracownik.setData_urodzenia(rs.getDate("Data_Urodzenia"));
-                pracownik.setPesel(rs.getString("Pesel"));
-                pracownik.setNr_konta_bankowego(rs.getString("Nr_Konta_Bankowego"));
-                pracownik.setNr_telefonu(rs.getString("Nr_Telefonu"));
-                pracownik.setId_antykwariatu(rs.getInt("Id_Antykwariatu"));
-                pracownik.setId_adresu(rs.getInt("Id_Adresu"));
-
-                /*pracownik.setId_pracownika(rs.getInt(1));
+                pracownik.setId_pracownika(rs.getInt(1));
                 pracownik.setImie(rs.getString(2));
                 pracownik.setNazwisko(rs.getString(3));
-                pracownik.setData_urodzenia(rs.getDate(4));
+                pracownik.setData_urodzenia(rs.getDate(4).toString());
                 pracownik.setPesel(rs.getString(5));
                 pracownik.setNr_konta_bankowego(rs.getString(6));
                 pracownik.setNr_telefonu(rs.getString(7));
                 pracownik.setId_antykwariatu(rs.getInt(8));
-                pracownik.setId_adresu(rs.getInt(9));*/
+                pracownik.setId_adresu(rs.getInt(9));
 
-                showParameters(pracownik);
+                //showParameters(pracownik);
 
                 pracownicy.add(pracownik);
             }
