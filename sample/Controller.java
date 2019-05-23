@@ -1,57 +1,93 @@
-package sample;
-
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
+import sample.DatabaseConnect;
+import sample.Pracownik;
 
-import java.sql.*;
-import java.util.Observable;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class Controller {
-
     static Connection conn;
-    //public ObservableList<Pracownik> pracownicy;
+    private ObservableList<Pracownik> pracownicy = FXCollections.observableArrayList();
+
+    @FXML
+    private TableView<Pracownik> tablePracownicy;
+
+    @FXML
+    private TableColumn<Pracownik, Integer> columnIdPracownika;
+
+    @FXML
+    private TableColumn<Pracownik, String> columnImiePracownika;
+
+    @FXML
+    private TableColumn<Pracownik, String> columnNazwiskoPracownika;
+
+    @FXML
+    private TableColumn<Pracownik, String> columnDataUrPracownika;
+
+    @FXML
+    private TableColumn<Pracownik, String> columnPeselPracownika;
+
+    @FXML
+    private TableColumn<Pracownik, String> columnNrKontaPracownika;
+
+    @FXML
+    private TableColumn<Pracownik, String> columnNrTelPracownika;
+
+    @FXML
+    private TableColumn<Pracownik, Integer> columnIdAntykwariatu;
+
+    @FXML
+    private TableColumn<Pracownik, Integer> columnIdAdresu;
 
     public Controller() {
     }
 
-    public void Initialize() {
-        DatabaseConnect databaseConnect = new DatabaseConnect();
+    @FXML
+    public void initialize() {
         try {
-            conn = databaseConnect.GetConn();
-            /*Statement state = conn.createStatement();
-            ResultSet rs = state.executeQuery("SELECT * FROM PRACOWNICY");*/
+            conn = new DatabaseConnect().GetConn();
 
 
-            /*while(rs.next())
-            {
-                System.out.println(rs.getObject(2));
-            }*/
         } catch (SQLException ex) {
-
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText(ex.toString());
+            alert.show();
         }
+
+        SetTableWithData(conn);
     }
 
-    public ObservableList<Pracownik> GetAllPracownicy(Connection conn) {
-        ObservableList<Pracownik> pracownicy = FXCollections.observableArrayList();
 
-        try
-        {
-            Statement state = conn.createStatement();
-            ResultSet rs = state.executeQuery("SELECT * FROM PRACOWNICY");
-            while(rs.next())
-            {
-                System.out.println(rs.getObject(2));
-                pracownicy.add(new Pracownik(rs.getInt("Id_Pracownika"), rs.getString("Imie"),
-                        rs.getString("Nazwisko"), rs.getDate("Data_Urodzenia"), rs.getString("Pesel"),
-                        rs.getString("Umowa"),rs.getString("Nr_Konta_Bankowego"), rs.getString("Nr_Telefonu"),
-                        rs.getInt("Id_Antykwariatu"), rs.getInt("Id_Adresu")));
+    public void SetTableWithData(Connection conn)
+    {
+
+        pracownicy = new Pracownik().GetAllPracownicy(conn);
+
+        columnIdPracownika.setCellValueFactory(new PropertyValueFactory<>("id_pracownika"));
+        columnImiePracownika.setCellValueFactory(new PropertyValueFactory<>("imie"));
+        columnNazwiskoPracownika.setCellValueFactory(new PropertyValueFactory<>("nazwisko"));
+        columnDataUrPracownika.setCellValueFactory(new PropertyValueFactory<>("data_urodzenia"));
+        columnPeselPracownika.setCellValueFactory(new PropertyValueFactory<>("pesel"));
+        columnNrKontaPracownika.setCellValueFactory(new PropertyValueFactory<>("nr_konta_bankowego"));
+        columnNrTelPracownika.setCellValueFactory(new PropertyValueFactory<>("nr_telefonu"));
+        columnIdAntykwariatu.setCellValueFactory(new PropertyValueFactory<>("id_antykwariatu"));
+        columnIdAdresu.setCellValueFactory(new PropertyValueFactory<>("id_adresu"));
 
 
-            }
-        }
-        catch (SQLException ex) {
-        }
+        tablePracownicy.setItems(pracownicy);
+       /* tablePracownicy.getColumns().addAll(columnIdPracownika, columnImiePracownika,
+                columnNazwiskoPracownika, columnDataUrPracownika, columnPeselPracownika,
+                columnNrKontaPracownika, columnNrTelPracownika, columnIdAntykwariatu, columnIdAdresu);
 
-        return pracownicy;
+        tablePracownicy.refresh();*/
     }
+
 }
