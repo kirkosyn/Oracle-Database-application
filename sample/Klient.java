@@ -16,10 +16,10 @@ public class Klient {
     private String nr_telefonu;
     private String email;
     private String czy_zarejestrowany;
-    private Date data_rejestracji;
+    private String data_rejestracji;
     private int id_adresu;
 
-    public Klient(int id_klienta, String imie, String nazwisko, String nr_telefonu, String email, String czy_zarejestrowany, Date data_rejestracji, int id_adresu) {
+    public Klient(int id_klienta, String imie, String nazwisko, String nr_telefonu, String email, String czy_zarejestrowany, String data_rejestracji, int id_adresu) {
         this.id_klienta = id_klienta;
         this.imie = imie;
         this.nazwisko = nazwisko;
@@ -44,7 +44,7 @@ public class Klient {
         this.nazwisko = nazwisko;
     }
 
-    public void setData_rejestracji(Date data_rejestracji) {
+    public void setData_rejestracji(String data_rejestracji) {
         this.data_rejestracji = data_rejestracji;
     }
 
@@ -76,7 +76,7 @@ public class Klient {
         return nazwisko;
     }
 
-    public Date getData_rejestracji() {
+    public String getData_rejestracji() {
         return data_rejestracji;
     }
 
@@ -108,7 +108,7 @@ public class Klient {
                 klient.setId_klienta(rs.getInt("Id_Klienta"));
                 klient.setImie(rs.getString("Imie"));
                 klient.setNazwisko(rs.getString("Nazwisko"));
-                klient.setData_rejestracji(rs.getDate("Data_Urodzenia"));
+                klient.setData_rejestracji(rs.getDate("Data_Urodzenia").toString());
                 klient.setNr_telefonu(rs.getString("Nr_Telefonu"));
                 klient.setId_adresu(rs.getInt("Id_Adresu"));
                 klient.setCzy_zarejestrowany(rs.getString("Czy_Zarejestrowany"));
@@ -116,6 +116,9 @@ public class Klient {
 
                 klienci.add(klient);
             }
+
+            rs.close();
+            state.close();
         }
         catch (SQLException ex) {
         }
