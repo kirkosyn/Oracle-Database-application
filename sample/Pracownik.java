@@ -4,6 +4,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -20,7 +21,6 @@ public class Pracownik {
     private String nr_telefonu;
     private Integer id_antykwariatu;
     private Integer id_adresu;
-    private ObservableList<Pracownik> pracownicy;
 
     public Pracownik(Integer id_pracownika, String imie, String nazwisko, String data_urodzenia, String pesel,
                      String nr_konta_bankowego, String nr_telefonu, Integer id_antykwariatu, Integer id_adresu) {
@@ -35,7 +35,8 @@ public class Pracownik {
         this.id_adresu = id_adresu; //.setValue(id_adresu);
     }
 
-    public Pracownik(){}
+    public Pracownik() {
+    }
 
     public void setId_pracownika(Integer id_pracownika) {
         this.id_pracownika = id_pracownika; //setValue(id_pracownika);
@@ -109,47 +110,5 @@ public class Pracownik {
         return id_adresu;//.get();
     }
 
-    public void showParameters(Pracownik pracownik)
-    {
-        System.out.println(String.valueOf(pracownik.getId_pracownika() + " " + pracownik.getImie() + " " +
-                pracownik.getNazwisko() + " " + String.valueOf(pracownik.getData_urodzenia()) + " " +
-                pracownik.getPesel() + " " + pracownik.getNr_konta_bankowego() + " " +
-                pracownik.getNr_telefonu() + " " + String.valueOf(pracownik.getId_antykwariatu()) + " " +
-                String.valueOf(pracownik.getId_adresu())));
-    }
 
-    public ObservableList<Pracownik> GetAllPracownicy(Connection conn) {
-        pracownicy = FXCollections.observableArrayList();
-        Pracownik pracownik;
-        try
-        {
-            Statement state = conn.createStatement();
-            ResultSet rs = state.executeQuery("SELECT * FROM PRACOWNICY");
-            while(rs.next())
-            {
-                pracownik = new Pracownik();
-
-                pracownik.setId_pracownika(rs.getInt(1));
-                pracownik.setImie(rs.getString(2));
-                pracownik.setNazwisko(rs.getString(3));
-                pracownik.setData_urodzenia(rs.getDate(4).toString());
-                pracownik.setPesel(rs.getString(5));
-                pracownik.setNr_konta_bankowego(rs.getString(6));
-                pracownik.setNr_telefonu(rs.getString(7));
-                pracownik.setId_antykwariatu(rs.getInt(8));
-                pracownik.setId_adresu(rs.getInt(9));
-
-                //showParameters(pracownik);
-
-                pracownicy.add(pracownik);
-            }
-
-            rs.close();
-            state.close();
-        }
-        catch (SQLException ex) {
-        }
-
-        return pracownicy;
-    }
 }
