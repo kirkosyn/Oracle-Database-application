@@ -46,16 +46,17 @@ public class DatabaseConnect {
         try {
             state = connection.createStatement();
             rs = state.executeQuery(cmd);
+            return rs;
         } catch (SQLException ex) {
             System.out.println(ex.toString());
         } finally {
             if (rs != null) {
-                rs.close();
+                //rs.close();
             }
             if (state != null) {
-                state.close();
+                //state.close();
             }
-            DisconnectConnection();
+            //DisconnectConnection();
         }
         return rs;
     }
@@ -69,9 +70,10 @@ public class DatabaseConnect {
         } catch (SQLException ex) {
             System.out.println(ex.toString());
         } finally {
-            if (state != null)
-                state.close();
-            DisconnectConnection();
+            if (state != null) {
+                //state.close();
+            }
+            //DisconnectConnection();
         }
 
     }
