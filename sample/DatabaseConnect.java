@@ -13,21 +13,20 @@ public class DatabaseConnect {
 
     }
 
-    public Connection GetConn() throws SQLException {
+    public static void ConnectToDatabase() throws SQLException {
         String url = "jdbc:oracle:thin:@localhost:1521:orcl";
         String user = "KPAWLUK";
         String pwd = "wbd2019";
 
         try {
             connection = DriverManager.getConnection(url, user, pwd);
-            return connection;
+
         } catch (SQLException ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText(ex.toString());
             alert.show();
         }
 
-        return connection;
     }
 
     public static void DisconnectConnection() throws SQLException {
