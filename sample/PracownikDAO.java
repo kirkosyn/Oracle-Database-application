@@ -98,19 +98,20 @@ public class PracownikDAO {
         return pracownicy;
     }
 
-    public String InsertPracownik(String imie, String nazwisko, Date data_urodzin, String pesel,
+    public void InsertPracownik(int id, String imie, String nazwisko, Date data_urodzin, String pesel,
                                 String telefon, String bank) throws SQLException {
         String cmd = "INSERT INTO PRACOWNICY\n" +
                 "VALUES\n" +
-                "(id_seq.nextval, '" + imie + "', '" + nazwisko + "', DATE '" + data_urodzin + "','" + pesel +
+                //"(?, ?, ?, DATE ?, ?, ?, ?, 1, 1)";
+                "(" + id + ", '" + imie + "', '" + nazwisko + "', DATE '" + data_urodzin + "','" + pesel +
                 "','" + bank + "','" + telefon + "', 1, 1)";
 
-        return cmd;
-        /*try {
+        //return cmd;
+        try {
             DatabaseConnect.ExecuteUpdateStatement(cmd);
         } catch (SQLException e) {
             System.out.print(e.toString());
-        }*/
+        }
     }
 
     public void UpdatePracownik(int id, String nazwisko, String telefon, String bank) throws SQLException {
@@ -134,5 +135,23 @@ public class PracownikDAO {
         } catch (SQLException e) {
             System.out.print(e.toString());
         }
+    }
+
+    public int MaxIdEntry()
+    {
+        String cmd = "SELECT MAX(ID_PRACOWNIKA) FROM PRACOWNICY";
+        int id = 0;
+        ResultSet rs = null;
+
+        try {
+            rs = DatabaseConnect.ExecuteStatement(cmd);
+            while (rs.next()) {
+                id = rs.getInt(1) + 1;
+            }
+        } catch (SQLException e) {
+            System.out.print(e.toString());
+        }
+
+        return id;
     }
 }

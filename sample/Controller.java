@@ -11,6 +11,7 @@ import sample.PracownikDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class Controller {
     static Connection conn;
@@ -126,8 +127,8 @@ public class Controller {
         columnIdAntykwariatu.setCellValueFactory(new PropertyValueFactory<>("id_antykwariatu"));
         columnIdAdresu.setCellValueFactory(new PropertyValueFactory<>("id_adresu"));
 
-
         tablePracownicy.setItems(pracownicy);
+        tablePracownicy.getSortOrder().add(columnIdPracownika);
        /* tablePracownicy.getColumns().addAll(columnIdPracownika, columnImiePracownika,
                 columnNazwiskoPracownika, columnDataUrPracownika, columnPeselPracownika,
                 columnNrKontaPracownika, columnNrTelPracownika, columnIdAntykwariatu, columnIdAdresu);
@@ -165,8 +166,7 @@ public class Controller {
         commitButton.setDisable(true);
     }
 
-    private void ClearFields()
-    {
+    private void ClearFields() {
         textUrodzenie.getEditor().clear();
         textAdres.getEditor().clear();
         textAntykwariat.getEditor().clear();
@@ -190,11 +190,15 @@ public class Controller {
     }
 
     public boolean CheckEntries(String imie, String nazwisko, Date data_urodzin, String pesel, String telefon, String bank) {
-        if (imie == null || nazwisko == null || data_urodzin == null || telefon == null || bank == null)
+        if (imie.isEmpty() || nazwisko.isEmpty() || data_urodzin.toString().isEmpty() || telefon.isEmpty() || bank.isEmpty())
             return false;
-        if (imie.matches(".*\\d.*") || nazwisko.matches(".*\\d.*"))
+        if (Pattern.matches(".*\\d.*", imie) || Pattern.matches(".*\\d.*", nazwisko)) //imie.matches(".*\\d.*")
             return false;
-
+        if (Pattern.matches(".*[a-zA-Z]+.*+", pesel) || Pattern.matches(".*[a-zA-Z]+.*+", telefon) ||
+                Pattern.matches(".*[a-zA-Z]+.*", bank)) //imie.matches(".*\\d.*")
+            return false;
+        //if(!Pattern.matches("[0-9]+", pesel) || !telefon.matches("[0-9]+") || bank.matches("[0-9]+"))
+        //    return false;
         return true;
     }
 
@@ -222,69 +226,82 @@ public class Controller {
         isAddingPracownik = true;
     }
 
-    public String InsertPracownik() throws SQLException {
-        ArrayList al = GetEntries();
+    public boolean InsertPracownik() throws SQLException, IndexOutOfBoundsException {
+        //boolean entries_correct = true;
         try {
+            ArrayList al = GetEntries();
             bank = al.get(5).toString();
             imie = al.get(0).toString();
-            imie = imie.substring(0,1).toUpperCase() + imie.substring(1);
+            imie = imie.substring(0, 1).toUpperCase() + imie.substring(1);
             nazwisko = al.get(1).toString();
-            nazwisko = nazwisko.substring(0,1).toUpperCase() + nazwisko.substring(1);
+            nazwisko = nazwisko.substring(0, 1).toUpperCase() + nazwisko.substring(1);
             pesel = al.get(3).toString();
             telefon = al.get(4).toString();
             data_urodzin = Date.valueOf(al.get(2).toString());
-        } catch (NullPointerException ex) {
-            ShowAlert(ex.toString());
-        } catch (IndexOutOfBoundsException ex) {
-            ShowAlert(ex.toString());
-        }
 
-        if (CheckEntries(imie, nazwisko, data_urodzin, pesel, telefon, bank)) {
-            /*try {
-
-            } catch (SQLException ex) {
-                ShowAlert(ex.toString());
+            if (!CheckEntries(imie, nazwisko, data_urodzin, pesel, telefon, bank)) {
+                ShowAlert("Jedno z pól zawiera nieprawidłowe dane!");
+                return false;
             }
-        } else {
+        } catch (NullPointerException ex) {
             ShowAlert("Jedno z pól zawiera nieprawidłowe dane!");
-        }*/
+            return false;
+        } catch (IndexOutOfBoundsException ex) {
+            ShowAlert("Jedno z pól zawiera nieprawidłowe dane!");
+            return false;
         }
+        int id = new PracownikDAO().MaxIdEntry();
 
-        String cmd = new PracownikDAO().InsertPracownik(imie, nazwisko, data_urodzin, pesel, telefon, bank);
-
-        return cmd;
+        //String cmd =
+        new PracownikDAO().InsertPracownik(id, imie, nazwisko, data_urodzin, pesel, telefon, bank);
+        return true;
+        //return cmd;
     }
 
     public void CancelEntries() {
-        DisableFields();
         try {
             ResultSet rs = DatabaseConnect.ExecuteStatement("ROLLBACK");
         } catch (SQLException ex) {
             ShowAlert(ex.toString());
         }
+        DisableFields();
+        RefreshTable();
     }
 
     public void DeleteEntry() throws SQLException {
         Pracownik pracownik = tablePracownicy.getSelectionModel().getSelectedItem();
-        int id = pracownik.getId_pracownika();
+        int id;
         try {
+            id = pracownik.getId_pracownika();
             new PracownikDAO().DeletePracownik(id);
+            commitButton.setDisable(false);
+            cancelButton.setDisable(false);
         } catch (SQLException ex) {
             ShowAlert(ex.toString());
         }
-        commitButton.setDisable(false);
-        cancelButton.setDisable(false);
+        catch (NullPointerException ex)
+        {
+            ShowAlert("Nie zaznaczyłeś wiersza!");
+            commitButton.setDisable(true);
+            cancelButton.setDisable(true);
+        }
         RefreshTable();
     }
 
     public void CommitEntry() throws SQLException {
-        String cmd = null;// = "COMMIT";
+        String cmd = "COMMIT";
+        boolean entries_correct = true;
         if (isAddingPracownik) {
-            cmd = InsertPracownik();
+            entries_correct = InsertPracownik();
         }
-        DatabaseConnect.ExecuteUpdateStatement(cmd);
+        if (!entries_correct) {
+            cmd = "ROLLBACK";
+            DatabaseConnect.ExecuteUpdateStatement(cmd);
+        } else {
+            DatabaseConnect.ExecuteUpdateStatement(cmd);
+            DisableFields();
+        }
         RefreshTable();
-        DisableFields();
     }
 
     private void ShowAlert(Object ex) {
