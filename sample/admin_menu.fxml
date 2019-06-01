@@ -82,18 +82,18 @@
                                     </TableColumn>
                                 </columns>
                             </TableView>
-                            <TextField layoutX="14.0" layoutY="276.0" prefHeight="24.0" prefWidth="376.0"
+                            <TextField fx:id="textSearch" layoutX="14.0" layoutY="276.0" prefHeight="24.0" prefWidth="376.0"
                                        promptText="Wpisz nazwisko"/>
                             <Button fx:id="addButton" layoutX="80.0" layoutY="318.0" mnemonicParsing="false"
                                     onAction="#EnableFields" prefHeight="25.0" prefWidth="74.0" text="Dodaj"/>
                             <Button fx:id="deleteButton" layoutX="201.0" layoutY="318.0" mnemonicParsing="false"
-                                    prefHeight="25.0" prefWidth="74.0" text="Usuń"/>
+                                    onAction="#DeleteEntry" prefHeight="25.0" prefWidth="74.0" text="Usuń"/>
                             <Button fx:id="searchButton" layoutX="390.0" layoutY="276.0" mnemonicParsing="false"
-                                    prefWidth="74.0" text="Szukaj"/>
+                                    onAction="#SearchEntry" prefWidth="74.0" text="Szukaj"/>
                             <Button fx:id="cancelButton" disable="true" layoutX="673.0" layoutY="318.0"
                                     onAction="#CancelEntries" mnemonicParsing="false" prefHeight="25.0" prefWidth="74.0" text="Cofnij"/>
                             <Button fx:id="commitButton" disable="true" layoutX="521.0" layoutY="318.0"
-                                    onAction="#InsertPracownik" mnemonicParsing="false" prefWidth="74.0"
+                                    onAction="#CommitEntry" mnemonicParsing="false" prefWidth="74.0"
                                     text="Zaakceptuj"/>
                             <TextField fx:id="textImie" disable="true" layoutX="521.0" layoutY="14.0" prefHeight="27.0"
                                        prefWidth="224.0" promptText="Imię"/>

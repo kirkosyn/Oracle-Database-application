@@ -1,5 +1,6 @@
 package sample;
 
+import com.sun.istack.internal.NotNull;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -54,49 +55,57 @@ public class PracownikDAO {
         return pracownicy;
     }
 
-    public Pracownik SearchPracownik(Connection conn, String nazwisko) throws SQLException {
-        String cmd = "SELECT * FROM PRACOWNICY WHERE NAZWISKO=" + nazwisko;
+    public ObservableList<Pracownik> SearchPracownik(String nazwisko) throws SQLException {
+        if (nazwisko.isEmpty())
+            return GetAllPracownicy();
+
+        nazwisko = nazwisko.toLowerCase();
+        nazwisko = nazwisko.substring(0, 1).toUpperCase() + nazwisko.substring(1);
+        ObservableList<Pracownik> pracownicy = null;
+
+        String cmd = "SELECT * FROM PRACOWNICY WHERE NAZWISKO=\'" + nazwisko + "\'";
         try {
 
             ResultSet rs = DatabaseConnect.ExecuteStatement(cmd);
-            Pracownik pracownik = getPracownikFromDatabase(rs);
+            pracownicy = getPracownikFromDatabase(rs);
 
             rs.close();
-            return pracownik;
+            return pracownicy;
         } catch (SQLException e) {
             System.out.println(e.toString());
         }
-        return new Pracownik();
+        return pracownicy;
     }
 
-    private Pracownik getPracownikFromDatabase(ResultSet rs) throws SQLException {
-        Pracownik pracownik = null;
-        if (rs.next()) {
+    private ObservableList<Pracownik> getPracownikFromDatabase(@NotNull ResultSet rs) throws SQLException {
+        Pracownik pracownik;
+        ObservableList<Pracownik> pracownicy = FXCollections.observableArrayList();
+
+        while (rs.next()) {
             pracownik = new Pracownik();
-            pracownik.setId_pracownika(rs.getInt(0));
-            pracownik.setImie(rs.getString(1));
-            pracownik.setNazwisko(rs.getString(2));
-            pracownik.setData_urodzenia(rs.getString(3));
-            pracownik.setPesel(rs.getString(4));
-            pracownik.setNr_konta_bankowego(rs.getString(5));
-            pracownik.setNr_telefonu(rs.getString(6));
-            pracownik.setId_antykwariatu(rs.getInt(7));
-            pracownik.setId_adresu(rs.getInt(8));
+            pracownik.setId_pracownika(rs.getInt(1));
+            pracownik.setImie(rs.getString(2));
+            pracownik.setNazwisko(rs.getString(3));
+            pracownik.setData_urodzenia(rs.getString(4));
+            pracownik.setPesel(rs.getString(5));
+            pracownik.setNr_konta_bankowego(rs.getString(6));
+            pracownik.setNr_telefonu(rs.getString(7));
+            pracownik.setId_antykwariatu(rs.getInt(8));
+            pracownik.setId_adresu(rs.getInt(9));
+
+            pracownicy.add(pracownik);
         }
-        return pracownik;
+        return pracownicy;
     }
 
-    public void InsertPracownik(Connection conn, String imie, String nazwisko, Date data_urodzin, String pesel,
+    public void InsertPracownik(String imie, String nazwisko, Date data_urodzin, String pesel,
                                 String telefon, String bank) throws SQLException {
-        String cmd =
-                "BEGIN\n" +
-                        "INSERT INTO PRACOWNICY\n" +
-                        "(ID_PRACOWNIKA, IMIE, NAZWISKO, DATA_URODZENIA, PESEL, NR_KONTA_BANKOWEGO, NR_TELEFONU, ID_ANTYKWARIATU, " +
-                        "ID_ADRESU)\n" +
-                        "VALUES\n" +
-                        "(sequence_employee.nextval, '" + imie + "', '" + nazwisko + "','" + data_urodzin + "','" + pesel +
-                        "','" + bank + "','" + telefon + "', 1, 1);\n" +
-                        "END;";
+        String cmd = "INSERT INTO PRACOWNICY\n" +
+                "(ID_PRACOWNIKA, IMIE, NAZWISKO, DATA_URODZENIA, PESEL, NR_KONTA_BANKOWEGO, NR_TELEFONU, ID_ANTYKWARIATU, " +
+                "ID_ADRESU)\n" +
+                "VALUES\n" +
+                "(sequence_employee.nextval, '" + imie + "', '" + nazwisko + "','" + data_urodzin + "','" + pesel +
+                "','" + bank + "','" + telefon + "', 1, 1)";
 
         try {
             DatabaseConnect.ExecuteUpdateStatement(cmd);
@@ -105,16 +114,12 @@ public class PracownikDAO {
         }
     }
 
-    public void UpdatePracownik(Connection conn, int id, String nazwisko, String telefon, String bank) throws SQLException {
-        String cmd =
-                "BEGIN\n" +
-                        "   UPDATE PRACOWNICY\n" +
-                        "      SET NAZWISKO = '" + nazwisko + "'\n" +
-                        "   AND NR_TELEFONU = '" + telefon + "'\n" +
-                        "   AND NR_KONTA_BANKOWEGO = '" + bank + "'\n" +
-                        "    WHERE ID_PRACOWNIKA = " + id + ";\n" +
-                        "END;";
-
+    public void UpdatePracownik(int id, String nazwisko, String telefon, String bank) throws SQLException {
+        String cmd = "UPDATE PRACOWNICY\n" +
+                "      SET NAZWISKO = '" + nazwisko + "'\n" +
+                "   AND NR_TELEFONU = '" + telefon + "'\n" +
+                "   AND NR_KONTA_BANKOWEGO = '" + bank + "'\n" +
+                "    WHERE ID_PRACOWNIKA = " + id;
         try {
             DatabaseConnect.ExecuteUpdateStatement(cmd);
         } catch (SQLException e) {
@@ -122,14 +127,9 @@ public class PracownikDAO {
         }
     }
 
-    public void DeletePracownik(Connection conn, int id) throws SQLException
-    {
-        String cmd =
-                "BEGIN\n" +
-                        "   DELETE FROM PRACOWNICY\n" +
-                        "         WHERE ID_PRACOWNIKA ="+ id +";\n" +
-                        "END;";
-
+    public void DeletePracownik(int id) throws SQLException {
+        String cmd = "DELETE FROM PRACOWNICY " +
+                "WHERE ID_PRACOWNIKA = " + id;
         try {
             DatabaseConnect.ExecuteUpdateStatement(cmd);
         } catch (SQLException e) {
