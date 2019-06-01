@@ -63,7 +63,8 @@ public class Controller {
 
     @FXML
     TextField textTelefon;
-
+    @FXML
+    TextField textSearch;
     @FXML
     ComboBox<String> textAntykwariat;
 
@@ -88,6 +89,7 @@ public class Controller {
     String pesel;
     String telefon;
     Date data_urodzin;
+    private boolean isAddingPracownik;
 
     public Controller() {
     }
@@ -105,6 +107,10 @@ public class Controller {
         SetTableWithData();
     }
 
+    public void RefreshTable() {
+        pracownicy.clear();
+        SetTableWithData();
+    }
 
     public void SetTableWithData() {
 
@@ -144,6 +150,8 @@ public class Controller {
     }
 
     public void DisableFields() {
+        ClearFields();
+
         textAdres.setDisable(true);
         textAntykwariat.setDisable(true);
         textBank.setDisable(true);
@@ -157,8 +165,28 @@ public class Controller {
         commitButton.setDisable(true);
     }
 
-    public void SearchEntry() {
+    private void ClearFields()
+    {
+        textUrodzenie.getEditor().clear();
+        textAdres.getEditor().clear();
+        textAntykwariat.getEditor().clear();
+        textBank.clear();
+        textImie.clear();
+        textTelefon.clear();
+        textPesel.clear();
+        textNazwisko.clear();
 
+    }
+
+    public void SearchEntry() throws SQLException {
+        try {
+            ObservableList<Pracownik> new_pracownicy = new PracownikDAO().SearchPracownik(textSearch.getText());
+            pracownicy.clear();
+            tablePracownicy.setItems(new_pracownicy);
+
+        } catch (SQLException ex) {
+            ShowAlert(ex.toString());
+        }
     }
 
     public boolean CheckEntries(String imie, String nazwisko, Date data_urodzin, String pesel, String telefon, String bank) {
@@ -189,12 +217,19 @@ public class Controller {
         return al;
     }
 
-    public void InsertPracownik() {
+    public void InsertPracownikAction() {
+        EnableFields();
+        isAddingPracownik = true;
+    }
+
+    public String InsertPracownik() throws SQLException {
         ArrayList al = GetEntries();
         try {
             bank = al.get(5).toString();
             imie = al.get(0).toString();
+            imie = imie.substring(0,1).toUpperCase() + imie.substring(1);
             nazwisko = al.get(1).toString();
+            nazwisko = nazwisko.substring(0,1).toUpperCase() + nazwisko.substring(1);
             pesel = al.get(3).toString();
             telefon = al.get(4).toString();
             data_urodzin = Date.valueOf(al.get(2).toString());
@@ -205,43 +240,51 @@ public class Controller {
         }
 
         if (CheckEntries(imie, nazwisko, data_urodzin, pesel, telefon, bank)) {
-            try {
-                String cmd = "INSERT INTO PRACOWNICY VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                PreparedStatement state = conn.prepareStatement(cmd);
-                state.setString(1, imie);
-                state.setString(2, nazwisko);
-                state.setDate(3, data_urodzin);
-                state.setString(4, pesel);
-                state.setString(5, bank);
-                state.setString(6, telefon);
-                state.setInt(7, 1);
-                state.setInt(8, 1);
-
-                int i = state.executeUpdate();
-                System.out.println(i + " records inserted");
-
-                state.close();
-
+            /*try {
 
             } catch (SQLException ex) {
                 ShowAlert(ex.toString());
             }
         } else {
             ShowAlert("Jedno z pól zawiera nieprawidłowe dane!");
+        }*/
         }
+
+        String cmd = new PracownikDAO().InsertPracownik(imie, nazwisko, data_urodzin, pesel, telefon, bank);
+
+        return cmd;
     }
 
     public void CancelEntries() {
         DisableFields();
         try {
-            Statement state = conn.createStatement();
-            ResultSet rs = state.executeQuery("ROLLBACK");
-
-            rs.close();
-            state.close();
+            ResultSet rs = DatabaseConnect.ExecuteStatement("ROLLBACK");
         } catch (SQLException ex) {
             ShowAlert(ex.toString());
         }
+    }
+
+    public void DeleteEntry() throws SQLException {
+        Pracownik pracownik = tablePracownicy.getSelectionModel().getSelectedItem();
+        int id = pracownik.getId_pracownika();
+        try {
+            new PracownikDAO().DeletePracownik(id);
+        } catch (SQLException ex) {
+            ShowAlert(ex.toString());
+        }
+        commitButton.setDisable(false);
+        cancelButton.setDisable(false);
+        RefreshTable();
+    }
+
+    public void CommitEntry() throws SQLException {
+        String cmd = null;// = "COMMIT";
+        if (isAddingPracownik) {
+            cmd = InsertPracownik();
+        }
+        DatabaseConnect.ExecuteUpdateStatement(cmd);
+        RefreshTable();
+        DisableFields();
     }
 
     private void ShowAlert(Object ex) {

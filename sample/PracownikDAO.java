@@ -63,7 +63,7 @@ public class PracownikDAO {
         nazwisko = nazwisko.substring(0, 1).toUpperCase() + nazwisko.substring(1);
         ObservableList<Pracownik> pracownicy = null;
 
-        String cmd = "SELECT * FROM PRACOWNICY WHERE NAZWISKO=\'" + nazwisko + "\'";
+        String cmd = "SELECT * FROM PRACOWNICY WHERE NAZWISKO LIKE \'" + nazwisko + "\'";
         try {
 
             ResultSet rs = DatabaseConnect.ExecuteStatement(cmd);
@@ -98,20 +98,19 @@ public class PracownikDAO {
         return pracownicy;
     }
 
-    public void InsertPracownik(String imie, String nazwisko, Date data_urodzin, String pesel,
+    public String InsertPracownik(String imie, String nazwisko, Date data_urodzin, String pesel,
                                 String telefon, String bank) throws SQLException {
         String cmd = "INSERT INTO PRACOWNICY\n" +
-                "(ID_PRACOWNIKA, IMIE, NAZWISKO, DATA_URODZENIA, PESEL, NR_KONTA_BANKOWEGO, NR_TELEFONU, ID_ANTYKWARIATU, " +
-                "ID_ADRESU)\n" +
                 "VALUES\n" +
-                "(sequence_employee.nextval, '" + imie + "', '" + nazwisko + "','" + data_urodzin + "','" + pesel +
+                "(id_seq.nextval, '" + imie + "', '" + nazwisko + "', DATE '" + data_urodzin + "','" + pesel +
                 "','" + bank + "','" + telefon + "', 1, 1)";
 
-        try {
+        return cmd;
+        /*try {
             DatabaseConnect.ExecuteUpdateStatement(cmd);
         } catch (SQLException e) {
             System.out.print(e.toString());
-        }
+        }*/
     }
 
     public void UpdatePracownik(int id, String nazwisko, String telefon, String bank) throws SQLException {
