@@ -1,16 +1,13 @@
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
 import sample.*;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Controller {
@@ -80,7 +77,6 @@ public class Controller {
 
     private boolean isAddingPracownik;
     private boolean isUpdatingPracownik;
-    static Connection conn;
 
     private ObservableList<Pracownik> pracownicy = FXCollections.observableArrayList();
     private ObservableList<Antykwariat> antykwariaty = FXCollections.observableArrayList();
@@ -242,7 +238,7 @@ public class Controller {
      * @param bank numer bankowy pracownika
      * @param id_ant antykwariat
      * @param id_addr adres
-     * @return
+     * @return zwraca prawdę lub fałsz - czy wpisane dane są poprawne zgodnie z przyjętymi kryteriami
      */
     public boolean CheckEntries(String imie, String nazwisko, Date data_urodzin, String pesel, String telefon,
                                 String bank, int id_ant, int id_addr) {
