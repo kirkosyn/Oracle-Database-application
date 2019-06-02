@@ -46,7 +46,7 @@ public class PracownikDAO {
         return pracownicy;
     }
 
-    public ObservableList<Pracownik> SearchPracownik(String nazwisko) throws SQLException {
+    public ObservableList<Pracownik> SearchPracownik(String nazwisko) {
         if (nazwisko.isEmpty())
             return GetAllPracownicy();
 
@@ -90,12 +90,12 @@ public class PracownikDAO {
     }
 
     public void InsertPracownik(int id, String imie, String nazwisko, Date data_urodzin, String pesel,
-                                String telefon, String bank) throws SQLException {
+                                String telefon, String bank, int id_ant, int id_adr) {
         String cmd = "INSERT INTO PRACOWNICY\n" +
                 "VALUES\n" +
                 //"(?, ?, ?, DATE ?, ?, ?, ?, 1, 1)";
                 "(" + id + ", '" + imie + "', '" + nazwisko + "', DATE '" + data_urodzin + "','" + pesel +
-                "','" + bank + "','" + telefon + "', 1, 1)";
+                "','" + bank + "','" + telefon + "', " + id_ant + ", " + id_adr + ")";
 
         //return cmd;
         try {
@@ -105,7 +105,7 @@ public class PracownikDAO {
         }
     }
 
-    public void UpdatePracownik(int id, String nazwisko, String telefon, String bank) throws SQLException {
+    public void UpdatePracownik(int id, String nazwisko, String telefon, String bank) {
         String cmd = "UPDATE PRACOWNICY\n" +
                 "      SET NAZWISKO = '" + nazwisko + "',\n" +
                 "    NR_TELEFONU = '" + telefon + "',\n" +
@@ -170,7 +170,7 @@ public class PracownikDAO {
         return pracownik;
     }
 
-    private Pracownik SetFieldsOfClass(ResultSet rs, Pracownik pracownik) throws SQLException {
+    private Pracownik SetFieldsOfClass(ResultSet rs, Pracownik pracownik) {
         try {
             pracownik.setId_pracownika(rs.getInt(1));
             pracownik.setImie(rs.getString(2));

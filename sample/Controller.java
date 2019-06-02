@@ -87,12 +87,14 @@ public class Controller {
     private Button cancelButton;
     @FXML
     private Button updateButton;
-    String bank;
-    String imie;
-    String nazwisko;
-    String pesel;
-    String telefon;
-    Date data_urodzin;
+    private String bank;
+    private String imie;
+    private String nazwisko;
+    private String pesel;
+    private String telefon;
+    private Date data_urodzin;
+    private int id_ant;
+    private int id_addr;
     private boolean isAddingPracownik;
     private boolean isUpdatingPracownik;
 
@@ -200,21 +202,21 @@ public class Controller {
 
     }
 
-    public void SearchEntry() throws SQLException {
-        try {
-            ObservableList<Pracownik> new_pracownicy = new PracownikDAO().SearchPracownik(textSearch.getText());
-            pracownicy.clear();
-            tablePracownicy.setItems(new_pracownicy);
-
-        } catch (SQLException ex) {
-            ShowAlert(ex.toString());
-        }
+    public void SearchEntry() {
+        ObservableList<Pracownik> new_pracownicy = new PracownikDAO().SearchPracownik(textSearch.getText());
+        pracownicy.clear();
+        tablePracownicy.setItems(new_pracownicy);
+        tablePracownicy.getSortOrder().add(columnIdPracownika);
     }
 
-    public boolean CheckEntries(String imie, String nazwisko, Date data_urodzin, String pesel, String telefon, String bank) {
+    public boolean CheckEntries(String imie, String nazwisko, Date data_urodzin, String pesel, String telefon,
+                                String bank, int id_ant, int id_addr) {
         if (pesel == null)
             pesel = "";
-        if (imie.isEmpty() || nazwisko.isEmpty() || data_urodzin.toString().isEmpty() || telefon.isEmpty() || bank.isEmpty())
+        if (id_addr == -1 || id_ant == -1)
+            return false;
+        if (imie.isEmpty() || nazwisko.isEmpty() || data_urodzin.toString().isEmpty() || telefon.isEmpty() ||
+                bank.isEmpty())
             return false;
         if (Pattern.matches(".*\\d.*", imie) || Pattern.matches(".*\\d.*", nazwisko)) //imie.matches(".*\\d.*")
             return false;
@@ -224,7 +226,7 @@ public class Controller {
         return true;
     }
 
-    public boolean GetEntries() throws NullPointerException {
+    public boolean GetEntries() throws NullPointerException, IndexOutOfBoundsException {
         try {
             bank = textBank.getText();
             imie = textImie.getText();
@@ -234,8 +236,10 @@ public class Controller {
             pesel = textPesel.getText();
             telefon = textTelefon.getText();
             data_urodzin = Date.valueOf(textUrodzenie.getValue());
+            id_ant = textAntykwariat.getSelectionModel().getSelectedIndex();
+            id_addr = textAdres.getSelectionModel().getSelectedIndex();
 
-            if (!CheckEntries(imie, nazwisko, data_urodzin, pesel, telefon, bank)) {
+            if (!CheckEntries(imie, nazwisko, data_urodzin, pesel, telefon, bank, id_ant, id_addr)) {
                 ShowAlert("Jedno z pól zawiera nieprawidłowe dane!");
                 return false;
             }
@@ -251,11 +255,14 @@ public class Controller {
 
     public void InsertPracownikAction() {
         EnableFields();
+        ClearFields();
+        CancelActions();
         isAddingPracownik = true;
     }
 
-    public void UpdatePracownikAction() {
-        //EnableFields();
+    public void UpdatePracownikAction() throws NullPointerException {
+        DisableFields();
+        CancelActions();
         Pracownik pracownik;
         try {
             pracownik = tablePracownicy.getSelectionModel().getSelectedItem();
@@ -280,22 +287,30 @@ public class Controller {
             return false;
         int id = new PracownikDAO().MaxIdEntry();
 
-        new PracownikDAO().InsertPracownik(id, imie, nazwisko, data_urodzin, pesel, telefon, bank);
+        new PracownikDAO().InsertPracownik(id, imie, nazwisko, data_urodzin, pesel, telefon, bank,
+                id_ant + 1, id_addr + 1);
         return true;
     }
 
     public void CancelEntries() {
         try {
-            ResultSet rs = DatabaseConnect.ExecuteStatement("ROLLBACK");
+            DatabaseConnect.ExecuteUpdateStatement("ROLLBACK");
         } catch (SQLException ex) {
             ShowAlert(ex.toString());
         }
+        CancelActions();
         DisableFields();
         RefreshTable();
     }
 
-    public void DeleteEntry() throws SQLException {
+    private void CancelActions()
+    {
+        isUpdatingPracownik = false;
+        isAddingPracownik = false;
+    }
+    public void DeleteEntry() throws NullPointerException {
         Pracownik pracownik = tablePracownicy.getSelectionModel().getSelectedItem();
+        DisableFields();
         int id;
         try {
             id = pracownik.getId_pracownika();
@@ -309,6 +324,7 @@ public class Controller {
             commitButton.setDisable(true);
             cancelButton.setDisable(true);
         }
+        CancelActions();
         RefreshTable();
     }
 
