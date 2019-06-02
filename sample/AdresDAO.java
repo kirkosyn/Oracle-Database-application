@@ -3,13 +3,17 @@ package sample;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AdresDAO {
     private ObservableList<Adres> adresy;
 
+    /**
+     * Metoda pobierająca dane adresów z bazy
+     *
+     * @return zwraca listę adresów z bazy
+     */
     public ObservableList<Adres> GetAllAdresy() {
         adresy = FXCollections.observableArrayList();
         Adres adres;
@@ -32,21 +36,14 @@ public class AdresDAO {
         return adresy;
     }
 
-    public Adres GetEntryAttributes(int id) throws SQLException {
-        String cmd = "SELECT * FROM ADRESY WHERE ID_ADRESU = " + id;
-        ResultSet rs = null;
-        Adres adres = new Adres();
-        try {
-            rs = DatabaseConnect.ExecuteStatement(cmd);
-            while (rs.next()) {
-                adres = SetFieldsOfClass(rs, adres);
-            }
-        } catch (SQLException ex) {
-            System.out.print(ex.toString());
-        }
-        return adres;
-    }
-
+    /**
+     * Metoda ustawiająca pola danych adresu na podstawie wyników zapytania
+     *
+     * @param rs    wynik zapytania
+     * @param adres obiekt adresu
+     * @return adres z wypełnionymi informacjami
+     * @throws SQLException
+     */
     private Adres SetFieldsOfClass(ResultSet rs, Adres adres) throws SQLException {
         try {
             adres.setId_adresu(rs.getInt(1));
@@ -62,4 +59,19 @@ public class AdresDAO {
 
         return adres;
     }
+
+    /*public Adres GetEntryAttributes(int id) throws SQLException {
+        String cmd = "SELECT * FROM ADRESY WHERE ID_ADRESU = " + id;
+        ResultSet rs = null;
+        Adres adres = new Adres();
+        try {
+            rs = DatabaseConnect.ExecuteStatement(cmd);
+            while (rs.next()) {
+                adres = SetFieldsOfClass(rs, adres);
+            }
+        } catch (SQLException ex) {
+            System.out.print(ex.toString());
+        }
+        return adres;
+    }*/
 }
