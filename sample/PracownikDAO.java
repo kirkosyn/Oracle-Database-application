@@ -10,18 +10,18 @@ import java.sql.*;
 public class PracownikDAO {
 
     private ObservableList<Pracownik> pracownicy;
-    /*public void showParameters(Pracownik pracownik)
-    {
-        System.out.println(String.valueOf(pracownik.getId_pracownika() + " " + pracownik.getImie() + " " +
-                pracownik.getNazwisko() + " " + String.valueOf(pracownik.getData_urodzenia()) + " " +
-                pracownik.getPesel() + " " + pracownik.getNr_konta_bankowego() + " " +
-                pracownik.getNr_telefonu() + " " + String.valueOf(pracownik.getId_antykwariatu()) + " " +
-                String.valueOf(pracownik.getId_adresu())));
-    }*/
 
+    /**
+     * Konstruktor
+     */
     public PracownikDAO() {
     }
 
+    /**
+     * Metoda pobierająca dane pracowników z bazy
+     *
+     * @return zwraca listę pracowników z bazy
+     */
     public ObservableList<Pracownik> GetAllPracownicy() {
         pracownicy = FXCollections.observableArrayList();
         Pracownik pracownik;
@@ -46,6 +46,12 @@ public class PracownikDAO {
         return pracownicy;
     }
 
+    /**
+     * Metoda wyszukująca pracownika na podstawie jego nazwiska
+     *
+     * @param nazwisko nazwisko - kryterium wyszukiwania
+     * @return zwraca danego pracownika
+     */
     public ObservableList<Pracownik> SearchPracownik(String nazwisko) {
         if (nazwisko.isEmpty())
             return GetAllPracownicy();
@@ -68,27 +74,39 @@ public class PracownikDAO {
         return pracownicy;
     }
 
+    /**
+     * Metoda zwracająca listę pracowników na podstawie wyników zapytania do bazy
+     *
+     * @param rs wynik zapytania
+     * @return lista pracowników
+     * @throws SQLException
+     */
     private ObservableList<Pracownik> getPracownikFromDatabase(@NotNull ResultSet rs) throws SQLException {
         Pracownik pracownik;
         ObservableList<Pracownik> pracownicy = FXCollections.observableArrayList();
 
         while (rs.next()) {
             pracownik = new Pracownik();
-            pracownik.setId_pracownika(rs.getInt(1));
-            pracownik.setImie(rs.getString(2));
-            pracownik.setNazwisko(rs.getString(3));
-            pracownik.setData_urodzenia(rs.getString(4));
-            pracownik.setPesel(rs.getString(5));
-            pracownik.setNr_konta_bankowego(rs.getString(6));
-            pracownik.setNr_telefonu(rs.getString(7));
-            pracownik.setId_antykwariatu(rs.getInt(8));
-            pracownik.setId_adresu(rs.getInt(9));
+            pracownik = SetFieldsOfClass(rs, pracownik);
 
             pracownicy.add(pracownik);
         }
         return pracownicy;
     }
 
+    /**
+     * Metoda wprowadzająca dane pracownika do bazy
+     *
+     * @param id           id
+     * @param imie         imie
+     * @param nazwisko     nazwisko
+     * @param data_urodzin data urodzin
+     * @param pesel        pesel
+     * @param telefon      numer telefonu
+     * @param bank         numer konta bankowego
+     * @param id_ant       antykwariat
+     * @param id_adr       adres
+     */
     public void InsertPracownik(int id, String imie, String nazwisko, Date data_urodzin, String pesel,
                                 String telefon, String bank, int id_ant, int id_adr) {
         String cmd = "INSERT INTO PRACOWNICY\n" +
@@ -105,6 +123,14 @@ public class PracownikDAO {
         }
     }
 
+    /**
+     * Metoda aktualizująca dane pracownika
+     *
+     * @param id       id
+     * @param nazwisko nazwisko
+     * @param telefon  numer telefonu
+     * @param bank     numer konta bankowego
+     */
     public void UpdatePracownik(int id, String nazwisko, String telefon, String bank) {
         String cmd = "UPDATE PRACOWNICY\n" +
                 "      SET NAZWISKO = '" + nazwisko + "',\n" +
@@ -128,6 +154,12 @@ public class PracownikDAO {
         }
     }
 
+    /**
+     * Metoda usuwająca pracownika z bazy
+     *
+     * @param id id
+     * @throws SQLException
+     */
     public void DeletePracownik(int id) throws SQLException {
         String cmd = "DELETE FROM PRACOWNICY " +
                 "WHERE ID_PRACOWNIKA = " + id;
@@ -138,6 +170,11 @@ public class PracownikDAO {
         }
     }
 
+    /**
+     * Metoda wyszukująca max indeks w tablicy
+     *
+     * @return max indeks
+     */
     public int MaxIdEntry() {
         String cmd = "SELECT MAX(ID_PRACOWNIKA) FROM PRACOWNICY";
         int id = 0;
@@ -155,21 +192,13 @@ public class PracownikDAO {
         return id;
     }
 
-    public Pracownik GetEntryAttributes(int id) {
-        String cmd = "SELECT * FROM PRACOWNICY WHERE ID_PRACOWNIKA = " + id;
-        ResultSet rs = null;
-        Pracownik pracownik = new Pracownik();
-        try {
-            rs = DatabaseConnect.ExecuteStatement(cmd);
-            while (rs.next()) {
-                pracownik = SetFieldsOfClass(rs, pracownik);
-            }
-        } catch (SQLException ex) {
-            System.out.print(ex.toString());
-        }
-        return pracownik;
-    }
-
+    /**
+     * Metoda ustawiająca pola danych pracownika na podstawie wyników zapytania
+     *
+     * @param rs        wynik zapytania
+     * @param pracownik obiekt pracownika
+     * @return pracownik z wypełnionymi informacjami
+     */
     private Pracownik SetFieldsOfClass(ResultSet rs, Pracownik pracownik) {
         try {
             pracownik.setId_pracownika(rs.getInt(1));
@@ -187,4 +216,29 @@ public class PracownikDAO {
 
         return pracownik;
     }
+
+    /*public void showParameters(Pracownik pracownik)
+    {
+        System.out.println(String.valueOf(pracownik.getId_pracownika() + " " + pracownik.getImie() + " " +
+                pracownik.getNazwisko() + " " + String.valueOf(pracownik.getData_urodzenia()) + " " +
+                pracownik.getPesel() + " " + pracownik.getNr_konta_bankowego() + " " +
+                pracownik.getNr_telefonu() + " " + String.valueOf(pracownik.getId_antykwariatu()) + " " +
+                String.valueOf(pracownik.getId_adresu())));
+    }*/
+
+    /*public Pracownik GetEntryAttributes(int id) {
+        String cmd = "SELECT * FROM PRACOWNICY WHERE ID_PRACOWNIKA = " + id;
+        ResultSet rs = null;
+        Pracownik pracownik = new Pracownik();
+        try {
+            rs = DatabaseConnect.ExecuteStatement(cmd);
+            while (rs.next()) {
+                pracownik = SetFieldsOfClass(rs, pracownik);
+            }
+        } catch (SQLException ex) {
+            System.out.print(ex.toString());
+        }
+        return pracownik;
+    }*/
 }
+
