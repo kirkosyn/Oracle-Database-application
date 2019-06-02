@@ -5,9 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
-import sample.DatabaseConnect;
-import sample.Pracownik;
-import sample.PracownikDAO;
+import sample.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,6 +14,8 @@ import java.util.regex.Pattern;
 public class Controller {
     static Connection conn;
     private ObservableList<Pracownik> pracownicy = FXCollections.observableArrayList();
+    private ObservableList<Antykwariat> antykwariaty = FXCollections.observableArrayList();
+    private ObservableList<Adres> adresy = FXCollections.observableArrayList();
 
     @FXML
     private TableView<Pracownik> tablePracownicy;
@@ -91,6 +91,7 @@ public class Controller {
     String telefon;
     Date data_urodzin;
     private boolean isAddingPracownik;
+    private boolean isUpdatingPracownik;
 
     public Controller() {
     }
@@ -106,6 +107,7 @@ public class Controller {
         }
 
         SetTableWithData();
+        SetComboBoxes();
     }
 
     public void RefreshTable() {
@@ -113,9 +115,19 @@ public class Controller {
         SetTableWithData();
     }
 
+    public void SetComboBoxes()
+    {
+        tablePracownicy.setItems(pracownicy);
+        tablePracownicy.getSortOrder().add(columnIdPracownika);
+
+        antykwariaty.forEach(antykwariat -> textAntykwariat.getItems().add(antykwariat.getNazwa()));
+        adresy.forEach(adres -> textAdres.getItems().add(adres.getMiasto()));
+    }
     public void SetTableWithData() {
 
         pracownicy = new PracownikDAO().GetAllPracownicy();
+        antykwariaty = new AntykwariatDAO().GetAllAntykwariaty();
+        adresy = new AdresDAO().GetAllAdresy();
 
         columnIdPracownika.setCellValueFactory(new PropertyValueFactory<>("id_pracownika"));
         columnImiePracownika.setCellValueFactory(new PropertyValueFactory<>("imie"));
@@ -129,11 +141,17 @@ public class Controller {
 
         tablePracownicy.setItems(pracownicy);
         tablePracownicy.getSortOrder().add(columnIdPracownika);
-       /* tablePracownicy.getColumns().addAll(columnIdPracownika, columnImiePracownika,
-                columnNazwiskoPracownika, columnDataUrPracownika, columnPeselPracownika,
-                columnNrKontaPracownika, columnNrTelPracownika, columnIdAntykwariatu, columnIdAdresu);
+    }
 
-        tablePracownicy.refresh();*/
+    public void SetTextFields(Pracownik pracownik) {
+        textAdres.getSelectionModel().select(pracownik.getId_adresu() - 1);
+        textAntykwariat.getSelectionModel().select(pracownik.getId_antykwariatu() - 1);
+        textBank.setText(pracownik.getNr_konta_bankowego());
+        textImie.setText(pracownik.getImie());
+        textNazwisko.setText(pracownik.getNazwisko());
+        textPesel.setText(pracownik.getPesel());
+        textTelefon.setText(pracownik.getNr_telefonu());
+        textUrodzenie.getEditor().setText(pracownik.getData_urodzenia());
     }
 
     public void EnableFields() {
@@ -168,8 +186,8 @@ public class Controller {
 
     private void ClearFields() {
         textUrodzenie.getEditor().clear();
-        textAdres.getEditor().clear();
-        textAntykwariat.getEditor().clear();
+        textAdres.getSelectionModel().clearSelection();
+        textAntykwariat.getSelectionModel().clearSelection();
         textBank.clear();
         textImie.clear();
         textTelefon.clear();
@@ -197,47 +215,19 @@ public class Controller {
         if (Pattern.matches(".*[a-zA-Z]+.*+", pesel) || Pattern.matches(".*[a-zA-Z]+.*+", telefon) ||
                 Pattern.matches(".*[a-zA-Z]+.*", bank)) //imie.matches(".*\\d.*")
             return false;
-        //if(!Pattern.matches("[0-9]+", pesel) || !telefon.matches("[0-9]+") || bank.matches("[0-9]+"))
-        //    return false;
         return true;
     }
 
-    public ArrayList GetEntries() throws NullPointerException {
-        ArrayList al = new ArrayList();
-        String bank = textBank.getText();
-        String imie = textImie.getText();
-        String nazwisko = textNazwisko.getText();
-        String pesel = textPesel.getText();
-        String telefon = textTelefon.getText();
-        Date data_urodzin = Date.valueOf(textUrodzenie.getValue());
-
-        al.add(imie);
-        al.add(nazwisko);
-        al.add(data_urodzin);
-        al.add(pesel);
-        al.add(telefon);
-        al.add(bank);
-
-        return al;
-    }
-
-    public void InsertPracownikAction() {
-        EnableFields();
-        isAddingPracownik = true;
-    }
-
-    public boolean InsertPracownik() throws SQLException, IndexOutOfBoundsException {
-        //boolean entries_correct = true;
+    public boolean GetEntries() throws NullPointerException {
         try {
-            ArrayList al = GetEntries();
-            bank = al.get(5).toString();
-            imie = al.get(0).toString();
+            bank = textBank.getText();
+            imie = textImie.getText();
             imie = imie.substring(0, 1).toUpperCase() + imie.substring(1);
-            nazwisko = al.get(1).toString();
+            nazwisko = textNazwisko.getText();
             nazwisko = nazwisko.substring(0, 1).toUpperCase() + nazwisko.substring(1);
-            pesel = al.get(3).toString();
-            telefon = al.get(4).toString();
-            data_urodzin = Date.valueOf(al.get(2).toString());
+            pesel = textPesel.getText();
+            telefon = textTelefon.getText();
+            data_urodzin = Date.valueOf(textUrodzenie.getValue());
 
             if (!CheckEntries(imie, nazwisko, data_urodzin, pesel, telefon, bank)) {
                 ShowAlert("Jedno z pól zawiera nieprawidłowe dane!");
@@ -250,12 +240,39 @@ public class Controller {
             ShowAlert("Jedno z pól zawiera nieprawidłowe dane!");
             return false;
         }
+        return true;
+    }
+
+    public void InsertPracownikAction() {
+        EnableFields();
+        isAddingPracownik = true;
+    }
+
+    public void UpdatePracownikAction() {
+        //EnableFields();
+        Pracownik pracownik;
+        try {
+            pracownik = tablePracownicy.getSelectionModel().getSelectedItem();
+            SetTextFields(pracownik);
+
+            textBank.setDisable(false);
+            textNazwisko.setDisable(false);
+            textTelefon.setDisable(false);
+            isUpdatingPracownik = true;
+        } catch (NullPointerException ex) {
+            ShowAlert("Nie zaznaczyłeś wiersza!");
+            commitButton.setDisable(true);
+            cancelButton.setDisable(true);
+        }
+    }
+
+    public boolean InsertPracownik() throws SQLException, IndexOutOfBoundsException {
+        if (!GetEntries())
+            return false;
         int id = new PracownikDAO().MaxIdEntry();
 
-        //String cmd =
         new PracownikDAO().InsertPracownik(id, imie, nazwisko, data_urodzin, pesel, telefon, bank);
         return true;
-        //return cmd;
     }
 
     public void CancelEntries() {
@@ -278,9 +295,7 @@ public class Controller {
             cancelButton.setDisable(false);
         } catch (SQLException ex) {
             ShowAlert(ex.toString());
-        }
-        catch (NullPointerException ex)
-        {
+        } catch (NullPointerException ex) {
             ShowAlert("Nie zaznaczyłeś wiersza!");
             commitButton.setDisable(true);
             cancelButton.setDisable(true);
@@ -293,6 +308,11 @@ public class Controller {
         boolean entries_correct = true;
         if (isAddingPracownik) {
             entries_correct = InsertPracownik();
+            isAddingPracownik = false;
+        }
+        if (isUpdatingPracownik) {
+            entries_correct = UpdateEntry();
+            isUpdatingPracownik = false;
         }
         if (!entries_correct) {
             cmd = "ROLLBACK";
@@ -302,6 +322,23 @@ public class Controller {
             DisableFields();
         }
         RefreshTable();
+    }
+
+    public boolean UpdateEntry() throws SQLException, NullPointerException {
+        Pracownik pracownik = tablePracownicy.getSelectionModel().getSelectedItem();
+        int id;
+        if (!GetEntries())
+            return false;
+        try {
+            id = pracownik.getId_pracownika();
+            new PracownikDAO().UpdatePracownik(id, nazwisko, telefon, bank);
+        } catch (NullPointerException ex) {
+            ShowAlert("Nie zaznaczyłeś wiersza!");
+            commitButton.setDisable(true);
+            cancelButton.setDisable(true);
+        }
+
+        return true;
     }
 
     private void ShowAlert(Object ex) {
