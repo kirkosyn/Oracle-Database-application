@@ -20,6 +20,7 @@ public class DatabaseConnect {
 
         try {
             connection = DriverManager.getConnection(url, user, pwd);
+            connection.setAutoCommit(false);
 
         } catch (SQLException ex) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -34,7 +35,7 @@ public class DatabaseConnect {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw e;
         }
     }
@@ -50,12 +51,12 @@ public class DatabaseConnect {
         } catch (SQLException ex) {
             System.out.println(ex.toString());
         } finally {
-            if (rs != null) {
-                //rs.close();
-            }
-            if (state != null) {
-                //state.close();
-            }
+            //   if (rs != null) {
+            //rs.close();
+            //   }
+            //if (state != null) {
+            //state.close();
+            //   }
             //DisconnectConnection();
         }
         return rs;
@@ -70,11 +71,22 @@ public class DatabaseConnect {
         } catch (SQLException ex) {
             System.out.println(ex.toString());
         } finally {
-            if (state != null) {
-                //state.close();
-            }
-            //DisconnectConnection();
+            //if (state != null) {
+            //state.close();
         }
+        //DisconnectConnection();
 
+
+    }
+
+    public static void ExecutePreparedStatement(String cmd, PreparedStatement pst) throws SQLException {
+        PreparedStatement state = pst;
+        try {
+            state = connection.prepareStatement(cmd);
+            //state.clearParameters();
+            state.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
+        }
     }
 }
