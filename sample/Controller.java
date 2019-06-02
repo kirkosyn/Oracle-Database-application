@@ -14,66 +14,47 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Controller {
-    static Connection conn;
-    private ObservableList<Pracownik> pracownicy = FXCollections.observableArrayList();
-    private ObservableList<Antykwariat> antykwariaty = FXCollections.observableArrayList();
-    private ObservableList<Adres> adresy = FXCollections.observableArrayList();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
     @FXML
     private TableView<Pracownik> tablePracownicy;
 
     @FXML
     private TableColumn<Pracownik, Integer> columnIdPracownika;
-
     @FXML
     private TableColumn<Pracownik, String> columnImiePracownika;
-
     @FXML
     private TableColumn<Pracownik, String> columnNazwiskoPracownika;
-
     @FXML
     private TableColumn<Pracownik, String> columnDataUrPracownika;
-
     @FXML
     private TableColumn<Pracownik, String> columnPeselPracownika;
-
     @FXML
     private TableColumn<Pracownik, String> columnNrKontaPracownika;
-
     @FXML
     private TableColumn<Pracownik, String> columnNrTelPracownika;
-
     @FXML
     private TableColumn<Pracownik, Integer> columnIdAntykwariatu;
-
     @FXML
     private TableColumn<Pracownik, Integer> columnIdAdresu;
 
     @FXML
-    TextField textImie;
+    private TextField textImie;
+    @FXML
+    private TextField textNazwisko;
+    @FXML
+    private TextField textPesel;
+    @FXML
+    private TextField textBank;
+    @FXML
+    private TextField textTelefon;
+    @FXML
+    private TextField textSearch;
 
     @FXML
-    TextField textNazwisko;
-
+    private DatePicker textUrodzenie;
     @FXML
-    DatePicker textUrodzenie;
-
+    private ComboBox<String> textAntykwariat;
     @FXML
-    TextField textPesel;
-
-    @FXML
-    TextField textBank;
-
-    @FXML
-    TextField textTelefon;
-    @FXML
-    TextField textSearch;
-    @FXML
-    ComboBox<String> textAntykwariat;
-
-    @FXML
-    ComboBox<String> textAdres;
+    private ComboBox<String> textAdres;
 
     @FXML
     private Button addButton;
@@ -87,6 +68,7 @@ public class Controller {
     private Button cancelButton;
     @FXML
     private Button updateButton;
+
     private String bank;
     private String imie;
     private String nazwisko;
@@ -95,12 +77,25 @@ public class Controller {
     private Date data_urodzin;
     private int id_ant;
     private int id_addr;
+    
     private boolean isAddingPracownik;
     private boolean isUpdatingPracownik;
+    static Connection conn;
 
+    private ObservableList<Pracownik> pracownicy = FXCollections.observableArrayList();
+    private ObservableList<Antykwariat> antykwariaty = FXCollections.observableArrayList();
+    private ObservableList<Adres> adresy = FXCollections.observableArrayList();
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    /**
+     * Konstruktor
+     */
     public Controller() {
     }
 
+    /**
+    Metoda inicjalizująca kontroler
+     */
     @FXML
     public void initialize() {
         try {
@@ -115,11 +110,19 @@ public class Controller {
         SetComboBoxes();
     }
 
+    /**
+     * Metoda czyszcząca tabelę GUI i wstawiająca dane po wykonanej akcji
+     */
     public void RefreshTable() {
         pracownicy.clear();
         SetTableWithData();
     }
 
+    /**
+     * Metoda wypełniająca komponenty Combobox
+     * - adresami (miasto)
+     * - antykwariatami (nazwa)
+     */
     public void SetComboBoxes() {
         tablePracownicy.setItems(pracownicy);
         tablePracownicy.getSortOrder().add(columnIdPracownika);
@@ -128,6 +131,9 @@ public class Controller {
         adresy.forEach(adres -> textAdres.getItems().add(adres.getMiasto()));
     }
 
+    /**
+     * Metoda uzupełniająca tablicę GUI danymi z bazy
+     */
     public void SetTableWithData() {
 
         pracownicy = new PracownikDAO().GetAllPracownicy();
@@ -148,6 +154,11 @@ public class Controller {
         tablePracownicy.getSortOrder().add(columnIdPracownika);
     }
 
+    /**
+     * Metoda wypełniająca komponenty GUI
+     * - obszary, które modyfikuje użytkownik
+     * @param pracownik obiekt pracownika, z którego pobierane są informacje
+     */
     public void SetTextFields(Pracownik pracownik) {
         textAdres.getSelectionModel().select(pracownik.getId_adresu() - 1);
         textAntykwariat.getSelectionModel().select(pracownik.getId_antykwariatu() - 1);
@@ -160,6 +171,9 @@ public class Controller {
         textUrodzenie.setValue(localDate);
     }
 
+    /**
+     * Metoda aktywująca komponenty GUI
+     */
     public void EnableFields() {
         textAdres.setDisable(false);
         textAntykwariat.setDisable(false);
@@ -174,6 +188,9 @@ public class Controller {
         commitButton.setDisable(false);
     }
 
+    /**
+     * Metoda dezaktywująca komponenty GUI
+     */
     public void DisableFields() {
         ClearFields();
 
@@ -190,6 +207,9 @@ public class Controller {
         commitButton.setDisable(true);
     }
 
+    /**
+     * Metoda czyszcząca komponenty GUI
+     */
     private void ClearFields() {
         textUrodzenie.getEditor().clear();
         textAdres.getSelectionModel().clearSelection();
@@ -202,6 +222,9 @@ public class Controller {
 
     }
 
+    /**
+     * Metoda wyszukująca wpis w bazie
+     */
     public void SearchEntry() {
         ObservableList<Pracownik> new_pracownicy = new PracownikDAO().SearchPracownik(textSearch.getText());
         pracownicy.clear();
@@ -209,6 +232,18 @@ public class Controller {
         tablePracownicy.getSortOrder().add(columnIdPracownika);
     }
 
+    /**
+     * Metoda sprawdzająca wpisane dane do komponentów GUI
+     * @param imie imię pracownika
+     * @param nazwisko nazwisko pracownika
+     * @param data_urodzin data urodzin pracownika
+     * @param pesel pesel pracownika
+     * @param telefon telefon pracownika
+     * @param bank numer bankowy pracownika
+     * @param id_ant antykwariat
+     * @param id_addr adres
+     * @return
+     */
     public boolean CheckEntries(String imie, String nazwisko, Date data_urodzin, String pesel, String telefon,
                                 String bank, int id_ant, int id_addr) {
         if (pesel == null)
@@ -226,6 +261,12 @@ public class Controller {
         return true;
     }
 
+    /**
+     * Metoda pobierająca dane z komponentów GUI
+     * @return zwraca prawdę lub fałsz - czy wpisane dane są poprawne i można wykonać na nich akcję
+     * @throws NullPointerException
+     * @throws IndexOutOfBoundsException
+     */
     public boolean GetEntries() throws NullPointerException, IndexOutOfBoundsException {
         try {
             bank = textBank.getText();
@@ -253,6 +294,9 @@ public class Controller {
         return true;
     }
 
+    /**
+     * Metoda uaktywniająca akcję dodawania pracownika do bazy danych
+     */
     public void InsertPracownikAction() {
         EnableFields();
         ClearFields();
@@ -260,6 +304,10 @@ public class Controller {
         isAddingPracownik = true;
     }
 
+    /**
+     * Metoda uaktywniająca akcję zaktualizowania pracownika
+     * @throws NullPointerException
+     */
     public void UpdatePracownikAction() throws NullPointerException {
         DisableFields();
         CancelActions();
@@ -282,6 +330,12 @@ public class Controller {
         }
     }
 
+    /**
+     * Metoda dodająca pracownika do bazy danych
+     * @return zwraca prawdę lub fałsz - czy dodanie zakończyło się sukcesem
+     * @throws SQLException
+     * @throws IndexOutOfBoundsException
+     */
     public boolean InsertPracownik() throws SQLException, IndexOutOfBoundsException {
         if (!GetEntries())
             return false;
@@ -292,6 +346,9 @@ public class Controller {
         return true;
     }
 
+    /**
+     * Metoda przerywająca akcję
+     */
     public void CancelEntries() {
         try {
             DatabaseConnect.ExecuteUpdateStatement("ROLLBACK");
@@ -303,11 +360,19 @@ public class Controller {
         RefreshTable();
     }
 
+    /**
+     * Metoda dezaktywująca akcje
+     */
     private void CancelActions()
     {
         isUpdatingPracownik = false;
         isAddingPracownik = false;
     }
+
+    /**
+     * Metoda usuwająca pracownika z bazy
+     * @throws NullPointerException
+     */
     public void DeleteEntry() throws NullPointerException {
         Pracownik pracownik = tablePracownicy.getSelectionModel().getSelectedItem();
         DisableFields();
@@ -328,6 +393,10 @@ public class Controller {
         RefreshTable();
     }
 
+    /**
+     * Metoda zatwierdzająca wykonaną akcję
+     * @throws SQLException
+     */
     public void CommitEntry() throws SQLException {
         String cmd = "COMMIT";
         boolean entries_correct = true;
@@ -349,6 +418,12 @@ public class Controller {
         RefreshTable();
     }
 
+    /**
+     * Właściwa metoda uaktualniająca dane pracownika w bazie
+     * @return
+     * @throws SQLException
+     * @throws NullPointerException
+     */
     public boolean UpdateEntry() throws SQLException, NullPointerException {
         Pracownik pracownik = tablePracownicy.getSelectionModel().getSelectedItem();
         int id;
@@ -366,6 +441,10 @@ public class Controller {
         return true;
     }
 
+    /**
+     * Metoda wyświetlająca alerty
+     * @param ex
+     */
     private void ShowAlert(Object ex) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText(ex.toString());
