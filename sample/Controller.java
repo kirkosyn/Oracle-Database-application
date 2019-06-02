@@ -8,6 +8,8 @@ import javafx.util.Callback;
 import sample.*;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -16,6 +18,7 @@ public class Controller {
     private ObservableList<Pracownik> pracownicy = FXCollections.observableArrayList();
     private ObservableList<Antykwariat> antykwariaty = FXCollections.observableArrayList();
     private ObservableList<Adres> adresy = FXCollections.observableArrayList();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @FXML
     private TableView<Pracownik> tablePracownicy;
@@ -115,14 +118,14 @@ public class Controller {
         SetTableWithData();
     }
 
-    public void SetComboBoxes()
-    {
+    public void SetComboBoxes() {
         tablePracownicy.setItems(pracownicy);
         tablePracownicy.getSortOrder().add(columnIdPracownika);
 
         antykwariaty.forEach(antykwariat -> textAntykwariat.getItems().add(antykwariat.getNazwa()));
         adresy.forEach(adres -> textAdres.getItems().add(adres.getMiasto()));
     }
+
     public void SetTableWithData() {
 
         pracownicy = new PracownikDAO().GetAllPracownicy();
@@ -151,7 +154,8 @@ public class Controller {
         textNazwisko.setText(pracownik.getNazwisko());
         textPesel.setText(pracownik.getPesel());
         textTelefon.setText(pracownik.getNr_telefonu());
-        textUrodzenie.getEditor().setText(pracownik.getData_urodzenia());
+        LocalDate localDate = LocalDate.parse(pracownik.getData_urodzenia(), formatter);
+        textUrodzenie.setValue(localDate);
     }
 
     public void EnableFields() {
@@ -208,12 +212,14 @@ public class Controller {
     }
 
     public boolean CheckEntries(String imie, String nazwisko, Date data_urodzin, String pesel, String telefon, String bank) {
+        if (pesel == null)
+            pesel = "";
         if (imie.isEmpty() || nazwisko.isEmpty() || data_urodzin.toString().isEmpty() || telefon.isEmpty() || bank.isEmpty())
             return false;
         if (Pattern.matches(".*\\d.*", imie) || Pattern.matches(".*\\d.*", nazwisko)) //imie.matches(".*\\d.*")
             return false;
         if (Pattern.matches(".*[a-zA-Z]+.*+", pesel) || Pattern.matches(".*[a-zA-Z]+.*+", telefon) ||
-                Pattern.matches(".*[a-zA-Z]+.*", bank)) //imie.matches(".*\\d.*")
+                Pattern.matches(".*[a-zA-Z]+.*", bank))
             return false;
         return true;
     }
@@ -259,6 +265,9 @@ public class Controller {
             textNazwisko.setDisable(false);
             textTelefon.setDisable(false);
             isUpdatingPracownik = true;
+
+            cancelButton.setDisable(false);
+            commitButton.setDisable(false);
         } catch (NullPointerException ex) {
             ShowAlert("Nie zaznaczyłeś wiersza!");
             commitButton.setDisable(true);

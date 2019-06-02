@@ -30,16 +30,7 @@ public class PracownikDAO {
             ResultSet rs = DatabaseConnect.ExecuteStatement(cmd);
             while (rs.next()) {
                 pracownik = new Pracownik();
-
-                pracownik.setId_pracownika(rs.getInt(1));
-                pracownik.setImie(rs.getString(2));
-                pracownik.setNazwisko(rs.getString(3));
-                pracownik.setData_urodzenia(rs.getDate(4).toString());
-                pracownik.setPesel(rs.getString(5));
-                pracownik.setNr_konta_bankowego(rs.getString(6));
-                pracownik.setNr_telefonu(rs.getString(7));
-                pracownik.setId_antykwariatu(rs.getInt(8));
-                pracownik.setId_adresu(rs.getInt(9));
+                pracownik = SetFieldsOfClass(rs, pracownik);
 
                 //showParameters(pracownik);
 
@@ -71,8 +62,8 @@ public class PracownikDAO {
 
             rs.close();
             return pracownicy;
-        } catch (SQLException e) {
-            System.out.println(e.toString());
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
         }
         return pracownicy;
     }
@@ -109,21 +100,31 @@ public class PracownikDAO {
         //return cmd;
         try {
             DatabaseConnect.ExecuteUpdateStatement(cmd);
-        } catch (SQLException e) {
-            System.out.print(e.toString());
+        } catch (SQLException ex) {
+            System.out.print(ex.toString());
         }
     }
 
     public void UpdatePracownik(int id, String nazwisko, String telefon, String bank) throws SQLException {
         String cmd = "UPDATE PRACOWNICY\n" +
-                "      SET NAZWISKO = '" + nazwisko + "'\n" +
-                "   AND NR_TELEFONU = '" + telefon + "'\n" +
-                "   AND NR_KONTA_BANKOWEGO = '" + bank + "'\n" +
+                "      SET NAZWISKO = '" + nazwisko + "',\n" +
+                "    NR_TELEFONU = '" + telefon + "',\n" +
+                "   NR_KONTA_BANKOWEGO = '" + bank + "'\n" +
                 "    WHERE ID_PRACOWNIKA = " + id;
+        /*String cmd = "UPDATE PRACOWNICY\n" +
+                "      SET NAZWISKO = ? " +
+                "   AND NR_TELEFONU = ? " +
+                "   AND NR_KONTA_BANKOWEGO = ? " +
+                "    WHERE ID_PRACOWNIKA = ?";
+        PreparedStatement preparedStatement = null;
+        preparedStatement.setString(1, nazwisko);
+        preparedStatement.setString(2, telefon);
+        preparedStatement.setString(3, bank);*/
+
         try {
             DatabaseConnect.ExecuteUpdateStatement(cmd);
-        } catch (SQLException e) {
-            System.out.print(e.toString());
+        } catch (SQLException ex) {
+            System.out.print(ex.toString());
         }
     }
 
@@ -132,13 +133,12 @@ public class PracownikDAO {
                 "WHERE ID_PRACOWNIKA = " + id;
         try {
             DatabaseConnect.ExecuteUpdateStatement(cmd);
-        } catch (SQLException e) {
-            System.out.print(e.toString());
+        } catch (SQLException ex) {
+            System.out.print(ex.toString());
         }
     }
 
-    public int MaxIdEntry()
-    {
+    public int MaxIdEntry() {
         String cmd = "SELECT MAX(ID_PRACOWNIKA) FROM PRACOWNICY";
         int id = 0;
         ResultSet rs = null;
@@ -148,10 +148,43 @@ public class PracownikDAO {
             while (rs.next()) {
                 id = rs.getInt(1) + 1;
             }
-        } catch (SQLException e) {
-            System.out.print(e.toString());
+        } catch (SQLException ex) {
+            System.out.print(ex.toString());
         }
 
         return id;
+    }
+
+    public Pracownik GetEntryAttributes(int id) {
+        String cmd = "SELECT * FROM PRACOWNICY WHERE ID_PRACOWNIKA = " + id;
+        ResultSet rs = null;
+        Pracownik pracownik = new Pracownik();
+        try {
+            rs = DatabaseConnect.ExecuteStatement(cmd);
+            while (rs.next()) {
+                pracownik = SetFieldsOfClass(rs, pracownik);
+            }
+        } catch (SQLException ex) {
+            System.out.print(ex.toString());
+        }
+        return pracownik;
+    }
+
+    private Pracownik SetFieldsOfClass(ResultSet rs, Pracownik pracownik) throws SQLException {
+        try {
+            pracownik.setId_pracownika(rs.getInt(1));
+            pracownik.setImie(rs.getString(2));
+            pracownik.setNazwisko(rs.getString(3));
+            pracownik.setData_urodzenia(rs.getDate(4).toString());
+            pracownik.setPesel(rs.getString(5));
+            pracownik.setNr_konta_bankowego(rs.getString(6));
+            pracownik.setNr_telefonu(rs.getString(7));
+            pracownik.setId_antykwariatu(rs.getInt(8));
+            pracownik.setId_adresu(rs.getInt(9));
+        } catch (SQLException ex) {
+            System.out.print(ex.toString());
+        }
+
+        return pracownik;
     }
 }
