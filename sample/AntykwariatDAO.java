@@ -3,14 +3,17 @@ package sample;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class AntykwariatDAO {
-
     private ObservableList<Antykwariat> antykwariaty;
 
+    /**
+     * Metoda pobierająca dane antykwariatów z bazy
+     *
+     * @return zwraca listę antykwariatów z bazy
+     */
     public ObservableList<Antykwariat> GetAllAntykwariaty() {
         antykwariaty = FXCollections.observableArrayList();
         Antykwariat antykwariat;
@@ -33,7 +36,30 @@ public class AntykwariatDAO {
         return antykwariaty;
     }
 
-    public Antykwariat GetEntryAttributes(int id) throws SQLException
+    /**
+     * Metoda ustawiająca pola danych antykwariatu na podstawie wyników zapytania
+     *
+     * @param rs          wynik zapytania
+     * @param antykwariat obiekt antykwariatu
+     * @return antykwariat z wypełnionymi informacjami
+     * @throws SQLException
+     */
+    private Antykwariat SetFieldsOfClass(ResultSet rs, Antykwariat antykwariat) throws SQLException {
+        try {
+            antykwariat.setId_antykwariatu(rs.getInt(1));
+            antykwariat.setNazwa(rs.getString(2));
+            antykwariat.setNr_telefonu(rs.getString(3));
+            antykwariat.setStrona_internetowa(rs.getString(4));
+            antykwariat.setData_powstania(rs.getDate(5).toString());
+            antykwariat.setId_adresu(rs.getInt(6));
+        } catch (SQLException ex) {
+            System.out.print(ex.toString());
+        }
+
+        return antykwariat;
+    }
+
+    /*public Antykwariat GetEntryAttributes(int id) throws SQLException
     {
         String cmd = "SELECT * FROM ANTYKWARIATY WHERE ID_ANTYKWARIATU = " + id;
         ResultSet rs = null;
@@ -49,20 +75,5 @@ public class AntykwariatDAO {
             System.out.print(ex.toString());
         }
         return antykwariat;
-    }
-
-    private Antykwariat SetFieldsOfClass(ResultSet rs, Antykwariat antykwariat) throws SQLException {
-        try {
-            antykwariat.setId_antykwariatu(rs.getInt(1));
-            antykwariat.setNazwa(rs.getString(2));
-            antykwariat.setNr_telefonu(rs.getString(3));
-            antykwariat.setStrona_internetowa(rs.getString(4));
-            antykwariat.setData_powstania(rs.getDate(5).toString());
-            antykwariat.setId_adresu(rs.getInt(6));
-        } catch (SQLException ex) {
-            System.out.print(ex.toString());
-        }
-
-        return antykwariat;
-    }
+    }*/
 }
