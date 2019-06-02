@@ -1,4 +1,4 @@
-package sample;
+package adres;
 
 public class Adres {
     private Integer id_adresu;
