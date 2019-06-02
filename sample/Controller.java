@@ -77,7 +77,7 @@ public class Controller {
     private Date data_urodzin;
     private int id_ant;
     private int id_addr;
-    
+
     private boolean isAddingPracownik;
     private boolean isUpdatingPracownik;
     static Connection conn;
@@ -257,6 +257,8 @@ public class Controller {
             return false;
         if (Pattern.matches(".*[a-zA-Z]+.*+", pesel) || Pattern.matches(".*[a-zA-Z]+.*+", telefon) ||
                 Pattern.matches(".*[a-zA-Z]+.*", bank))
+            return false;
+        if (imie.length() > 20 || nazwisko.length() > 20 || pesel.length() > 11 || telefon.length() > 9 || bank.length() > 8)
             return false;
         return true;
     }
