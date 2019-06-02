@@ -1,4 +1,4 @@
-package sample;
+package admin;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +13,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("admin_menu.fxml"));
         primaryStage.setTitle("Menadżer pracowników");
-        primaryStage.setScene(new Scene(root, 770, 400));
+        primaryStage.setScene(new Scene(root, 760, 400));
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

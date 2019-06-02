@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.Pane?>
 
 <AnchorPane maxHeight="400.0" maxWidth="770.0" minHeight="400.0" minWidth="770.0" prefHeight="400.0" prefWidth="770.0"
-            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="admin.AdminController">
     <children>
         <TabPane maxHeight="400" maxWidth="770" minHeight="400.0" minWidth="770.0" prefHeight="400.0" prefWidth="770.0"
                  tabClosingPolicy="UNAVAILABLE">
@@ -85,13 +85,13 @@
                             <TextField fx:id="textSearch" layoutX="14.0" layoutY="276.0" prefHeight="24.0" prefWidth="376.0"
                                        promptText="Wpisz nazwisko"/>
                             <Button fx:id="addButton" layoutX="80.0" layoutY="318.0" mnemonicParsing="false"
-                                    onAction="#EnableFields" prefHeight="25.0" prefWidth="74.0" text="Dodaj"/>
+                                    onAction="#InsertPracownikAction" prefHeight="25.0" prefWidth="74.0" text="Dodaj"/>
                             <Button fx:id="deleteButton" layoutX="201.0" layoutY="318.0" mnemonicParsing="false"
                                     onAction="#DeleteEntry" prefHeight="25.0" prefWidth="74.0" text="Usuń"/>
                             <Button fx:id="searchButton" layoutX="390.0" layoutY="276.0" mnemonicParsing="false"
                                     onAction="#SearchEntry" prefWidth="74.0" text="Szukaj"/>
                             <Button fx:id="cancelButton" disable="true" layoutX="673.0" layoutY="318.0"
-                                    onAction="#CancelEntries" mnemonicParsing="false" prefHeight="25.0" prefWidth="74.0" text="Cofnij"/>
+                                    onAction="#CancelEntries" mnemonicParsing="false" prefHeight="25.0" prefWidth="74.0" text="Anuluj"/>
                             <Button fx:id="commitButton" disable="true" layoutX="521.0" layoutY="318.0"
                                     onAction="#CommitEntry" mnemonicParsing="false" prefWidth="74.0"
                                     text="Zaakceptuj"/>
@@ -114,7 +114,7 @@
                             <Separator layoutX="490.0" layoutY="14.0" orientation="VERTICAL" prefHeight="350.0"
                                        prefWidth="7.0"/>
                             <Button fx:id="updateButton" layoutX="317.0" layoutY="318.0" mnemonicParsing="false"
-                                    text="Zaktualizuj"/>
+                                    onAction="#UpdatePracownikAction" text="Zaktualizuj"/>
 
                         </children>
                     </Pane>
