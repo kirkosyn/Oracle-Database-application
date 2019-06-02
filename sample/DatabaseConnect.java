@@ -2,17 +2,24 @@ package sample;
 
 import javafx.scene.control.Alert;
 
-import javax.xml.crypto.Data;
 import java.sql.*;
 
 public class DatabaseConnect {
 
     public static Connection connection;
 
+    /**
+     * Konstruktor
+     */
     public DatabaseConnect() {
 
     }
 
+    /**
+     * Metoda ustanawiająca połączenie z bazą
+     *
+     * @throws SQLException
+     */
     public static void ConnectToDatabase() throws SQLException {
         String url = "jdbc:oracle:thin:@localhost:1521:orcl";
         String user = "KPAWLUK";
@@ -30,6 +37,11 @@ public class DatabaseConnect {
 
     }
 
+    /**
+     * Metoda rozłączająca połączenie z bazą
+     *
+     * @throws SQLException
+     */
     public static void DisconnectConnection() throws SQLException {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -40,6 +52,13 @@ public class DatabaseConnect {
         }
     }
 
+    /**
+     * Metoda wykonująca zapytanie do bazy
+     *
+     * @param cmd zapytanie
+     * @return zwraca wynik zapytania
+     * @throws SQLException
+     */
     public static ResultSet ExecuteStatement(String cmd) throws SQLException {
         ResultSet rs = null;
         Statement state = null;
@@ -62,6 +81,12 @@ public class DatabaseConnect {
         return rs;
     }
 
+    /**
+     * Metoda wykonująca zapytanie do bazy
+     *
+     * @param cmd zapytanie
+     * @throws SQLException
+     */
     public static void ExecuteUpdateStatement(String cmd) throws SQLException {
         Statement state = null;
         try {
@@ -79,6 +104,7 @@ public class DatabaseConnect {
 
     }
 
+    /*
     public static void ExecutePreparedStatement(String cmd, PreparedStatement pst) throws SQLException {
         PreparedStatement state = pst;
         try {
@@ -88,5 +114,5 @@ public class DatabaseConnect {
         } catch (SQLException ex) {
             System.out.println(ex.toString());
         }
-    }
+    }*/
 }
