@@ -404,11 +404,9 @@ public class Controller {
         boolean entries_correct = true;
         if (isAddingPracownik) {
             entries_correct = InsertPracownik();
-            isAddingPracownik = false;
         }
         if (isUpdatingPracownik) {
             entries_correct = UpdateEntry();
-            isUpdatingPracownik = false;
         }
         if (!entries_correct) {
             cmd = "ROLLBACK";
@@ -416,6 +414,7 @@ public class Controller {
         } else {
             DatabaseConnect.ExecuteUpdateStatement(cmd);
             DisableFields();
+            CancelActions();
         }
         RefreshTable();
     }
