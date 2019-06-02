@@ -1,5 +1,6 @@
-package sample;
+package antykwariat;
 
+import connection.DatabaseConnect;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;

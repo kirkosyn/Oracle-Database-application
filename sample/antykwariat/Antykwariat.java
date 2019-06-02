@@ -1,4 +1,4 @@
-package sample;
+package antykwariat;
 
 public class Antykwariat {
     private String nr_telefonu;
