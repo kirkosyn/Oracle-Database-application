@@ -1,5 +1,6 @@
-package sample;
+package pracownik;
 
+import connection.DatabaseConnect;
 import com.sun.istack.internal.NotNull;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

@@ -1,4 +1,4 @@
-package sample;
+package pracownik;
 
 public class Pracownik {
     private Integer id_pracownika;
